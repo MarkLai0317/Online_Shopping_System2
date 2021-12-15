@@ -34,7 +34,7 @@ const routes = [
       }
     ]
   },
-  /*{
+  {
     path: '/test',
     name: 'Test',
     component:  () => import('../views/Test.vue'),
@@ -44,7 +44,7 @@ const routes = [
         component: () => import('../components/NNTest.vue')
       }
     ]
-  }*/
+  }
 ]
 
 const router = createRouter({
