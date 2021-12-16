@@ -6,7 +6,9 @@ import store from './store'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-//import axios from 'axios'
+//import ajax from "vuejs-ajax"
+import axios from 'axios'
+
 //import firebase from 'firebase/app'
 
 
@@ -35,9 +37,18 @@ let app;
 
 firebase.auth().onAuthStateChanged(() => {
   if(!app){
-    app = createApp(App).use(store).use(router).use(fire).use(ElementPlus).mount('#app')
+    app = createApp(App).use(store).use(router).use(ElementPlus)
+    app.config.globalProperties.axios=axios
+    app.config.globalProperties.firebase=fire
+    app.mount('#app')
   }
 })
+
+//const app = createApp(App).use(store).use(router).use(fire).use(ElementPlus).mount('#app')
+//app.config.globalProperties.axios=axios
+
+
+
 
 //createApp(App).use(store).use(router).use(fire).mount('#app')
 

@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/auth";
+//import firebase from "firebase/compat/app";
+//import "firebase/auth";
 export default {
   data() {
     return {
@@ -27,12 +27,15 @@ export default {
   },
   methods: {
     pressed() {
-      firebase
+      this.firebase
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(data => {
           console.log(data);
           this.$router.replace({ name: 'Buy' });
+
+          // 取email 用法
+          console.log('this is email: ',this.firebase.auth().currentUser.email)
         })
         .catch(error => {
           this.error = error;

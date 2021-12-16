@@ -5,8 +5,8 @@
   </div>
 </template>
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/auth";
+//import firebase from "firebase/compat/app";
+//import "firebase/auth";
 
 export default {
   components:{
@@ -14,11 +14,12 @@ export default {
   },
   methods: {
     signOut() {
-      firebase
+      this.firebase
         .auth()
         .signOut()
         .then(() => {
           this.$router.replace({ name: "Login" });
+          console.log(this.firebase.auth().currentUser)
         });
     }
   }

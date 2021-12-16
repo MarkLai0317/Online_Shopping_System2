@@ -15,11 +15,24 @@
 
 <script>
   import CustomerHeader from '../components/CustomerHeader'
+  //import ajax from 'vuejs-ajax'
 export default {
-  
+  created(){
+    this.getSensorsData()
+  },
   components:{
     CustomerHeader,
    
+  },
+  methods:{
+    getSensorsData() {
+       this.axios({
+         methos: 'get',
+         url: 'http://52.197.39.218:8080/sensordata'
+       }).then(res=>{
+         console.log(JSON.stringify(res.data))
+       })
+    }
   }
 }
 </script>
