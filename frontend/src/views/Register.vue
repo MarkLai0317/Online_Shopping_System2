@@ -33,7 +33,7 @@ export default {
     pressed() {
       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.email, this.password,this.phoneNumber)
+        .createUserWithEmailAndPassword(this.email, this.password)
         .then(() => {
           console.log("here");
           this.$router.replace({ name: "Buy" });
