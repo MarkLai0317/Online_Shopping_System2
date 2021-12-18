@@ -56,7 +56,24 @@ const routes = [
     children:[
       {
         path: 'nn',
-        component: () => import('../components/NNTest.vue')
+        component: () => import('../components/test/NNTest.vue')
+      },
+      {
+        path: 'mark',
+        component: () => import('../components/MarkTest.vue')
+      },
+      {
+        path: 'lin',
+        component: () => import('../components/test/linTest.vue')
+      },
+      {
+        path: 'chang',
+        component: () => import('../components/test/linTest.vue')
+      },
+      {
+        path: 'tsai',
+        component: () => import('../components/test/tsaiTest.vue')
+
       }
     ]
   }
