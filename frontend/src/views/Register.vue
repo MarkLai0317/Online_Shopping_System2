@@ -9,6 +9,9 @@
       <div class="password">
         <input type="password" v-model="password" placeholder="password" />
       </div>
+      <div class="phoneNumber">
+        <input type="phoneNumber" placeholder="phoneNumber" v-model="phoneNumber"/>
+      </div>
       <button type="submit">Register</button>
     </form>
   </div>
@@ -22,6 +25,7 @@ export default {
     return {
       email: "",
       password: "",
+      phoneNumber: "",
       error: ""
     };
   },
@@ -29,7 +33,7 @@ export default {
     pressed() {
       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
+        .createUserWithEmailAndPassword(this.email, this.password,this.phoneNumber)
         .then(() => {
           console.log("here");
           this.$router.replace({ name: "Buy" });
