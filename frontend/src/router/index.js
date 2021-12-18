@@ -45,8 +45,15 @@ const routes = [
       },
       {
         path: 'history',
+        name: 'History',
         component: ()=> import('../components/CustomerHistory.vue')
-      }
+      },/*
+      {
+        path: 'cart',
+        name: 'Cart',
+        component: ()=> import('../components/Cart.vue') 
+        // Cart.vue can never be found
+      }*/
     ]
   },
   {
