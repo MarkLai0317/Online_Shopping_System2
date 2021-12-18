@@ -1,13 +1,13 @@
-<template lang="">
+<template>
   <div>
-    this is tsai test
+    <!--<Cart/>-->
   </div>
 </template>
 <script>
-export default {
-  
+//import Cart from "../Cart.vue"
+export default{
+  components:{
+    //Cart
+  }
 }
 </script>
-<style lang="">
-  
-</style>
