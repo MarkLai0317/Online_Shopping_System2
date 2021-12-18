@@ -1,4 +1,4 @@
-<template>
+<template lang="">
   <div>
     this is cart
   </div>
@@ -8,6 +8,6 @@ export default {
   
 }
 </script>
-<style scoped>
+<style lang="">
   
 </style>
