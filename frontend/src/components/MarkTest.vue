@@ -1,24 +1,17 @@
 <template>
     <div>
-      jfsal;f
-      <el-select v-model="valueA" placeholder="Select">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-      
-      <el-button @click="handle(valueA)">button</el-button>
+      <MarkComponent :prop="testProp"></MarkComponent>
     </div>
 </template>
 
 <script>
 
+import MarkComponent from './test/MarkComponent.vue'
 
 export default {
+  components:{
+    MarkComponent
+  },
   created(){
     console.log(this.options[0])
     
@@ -56,7 +49,8 @@ export default {
           id: '2',
           name: 'n2'
         }
-      ]
+      ],
+      testProp: 'testProp string'
     }
   },
   methods:{
