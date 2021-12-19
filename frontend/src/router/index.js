@@ -51,8 +51,7 @@ const routes = [
       {
         path: 'cart',
         name: 'Cart',
-        component: ()=> import('../components/CustomerCart.vue')
-        // Cart.vue can never be found
+        component: ()=> import('../components/CustomerCart.vue') 
       }
     ]
   },
@@ -75,7 +74,7 @@ const routes = [
       },
       {
         path: 'chang',
-        component: () => import('../components/test/linTest.vue')
+        component: () => import('../components/test/changTest.vue')
       },
       {
         path: 'tsai',
