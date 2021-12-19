@@ -1,9 +1,14 @@
 <template>
   <el-table :data="productTable" style="width: 100%">
-    <el-table-column prop="product" label="Product" width="150" />
+    <el-table-column fixed prop="product" label="Product" width="150" />
     <el-table-column prop="shop" label="Shop" width="150" />
     <el-table-column prop="remaining" label="Remaining" width="150"/>
     <el-table-column prop="price" label="Price" width="150"/>
+    <el-table-column>
+      <template #default>
+        <el-button size="small" @click="handleClick">Add</el-button>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 
@@ -32,12 +37,17 @@ export default {
         },
         {
           product: 'dick',
-          shop: 'Tom',
+          shop: 'Shawn',
           remaining: '642',
           price: '1999'
         },
       ],
     }
+  },
+  methods: {
+    handleClick() {
+      console.log('click')
+    },
   },
 }
 </script>
