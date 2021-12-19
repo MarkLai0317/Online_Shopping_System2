@@ -87,6 +87,10 @@ const routes = [
         component: () => import('../components/test/NNTest.vue')
       },
       {
+        path: 'customerhistory',
+        component: ()=> import('../components/CustomerHistory.vue')
+      },
+      {
         path: 'mark',
         component: () => import('../components/MarkTest.vue')
       },
