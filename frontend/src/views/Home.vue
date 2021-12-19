@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button @click="toCustomerHome">Customer</el-button>
-    <el-button @click="toManagerHome">Manager</el-button>
+    <el-button @click="toCustomerLogin">Customer</el-button>
+    <el-button @click="toManagerLogin">Manager</el-button>
   </div>
 </template>
 
@@ -11,14 +11,14 @@ export default {
   components: {
 
   },
-  method: {
-    toCustomerHome(){
+  methods: {
+    toCustomerLogin(){
       console.log("123")
-      //this.$router.push({name:"CustomerHome"})
+      this.$router.push({name:"Login"}) // should be custumer login
     },
-    toManagerHome(){
-      this.router.push({name:"ManagerHome"})
-    }
+    toManagerLogin(){
+      this.$router.push({name:"Login"}) // should be manager login
+    },
   }
   
 }
