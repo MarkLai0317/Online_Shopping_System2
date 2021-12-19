@@ -1,6 +1,6 @@
-<template>
+<template lang="">
   <div>
-    this is cart
+    this is Cart
   </div>
 </template>
 <script>
@@ -8,6 +8,6 @@ export default {
   
 }
 </script>
-<style scoped>
+<style lang="">
   
 </style>
