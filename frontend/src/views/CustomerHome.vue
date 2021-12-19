@@ -2,7 +2,7 @@
   <el-container style="height: 500px; border: 1px solid #eee">
     
     <el-container>
-      <el-header style=" font-size: 30px">
+      <el-header style="font-size: 30px; text-align: left">
         <CustomerHeader></CustomerHeader>
       </el-header>
 
