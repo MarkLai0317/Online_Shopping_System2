@@ -21,11 +21,11 @@ const routes = [
     name: 'Register',
     component: () => import('../views/Register.vue')
   },
-  /*{
-    path: '/login',
-    name:'Login',
-    component: Login
-  },*/
+  {
+    path: '/managerHome',
+    name: 'ManagerHome',
+    component: () => import('../views/ManagerHome.vue')
+  },
   
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
