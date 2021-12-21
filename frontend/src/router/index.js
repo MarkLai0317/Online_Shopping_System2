@@ -12,14 +12,19 @@ const routes = [
     component: Home
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
+    path: '/customerLogin',
+    name: 'CustomerLogin',
+    component: () => import('../views/CustomerLogin.vue')
   },
   {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../views/Register.vue')
+    path: '/managerLogin',
+    name: 'ManagerLogin',
+    component: () => import('../views/ManagerLogin.vue')
+  },
+  {
+    path: '/customerRegister',
+    name: 'CustomerRegister',
+    component: () => import('../views/CustomerRegister.vue')
   },
   {
     path: '/managerHome',
