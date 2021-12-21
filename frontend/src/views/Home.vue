@@ -14,10 +14,10 @@ export default {
   methods: {
     toCustomerLogin(){
       console.log("123")
-      this.$router.push({name:"Login"}) // should be custumer login
+      this.$router.push({name:"CustomerLogin"}) 
     },
     toManagerLogin(){
-      this.$router.push({name:"Login"}) // should be manager login
+      this.$router.push({name:"ManagerLogin"}) 
     },
   }
   
