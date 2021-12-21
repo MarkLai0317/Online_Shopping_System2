@@ -1,6 +1,6 @@
 <template lang="">
   <div>
-    
+    this is order history 
   </div>
 </template>
 <script>

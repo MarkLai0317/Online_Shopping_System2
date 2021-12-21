@@ -29,14 +29,31 @@ const routes = [
   {
     path: '/managerHome',
     name: 'ManagerHome',
-    component: () => import('../views/ManagerHome.vue')
+    component: () => import('../views/ManagerHome.vue'),
+    children:[
+      {
+        path: 'orderHistory',
+        component: () => import('../components/OrderHistory.vue')
+      },
+      {
+        path: 'tradeHistory',
+        component: () => import('../components/TradeHistory.vue')
+      },
+      {
+        path: 'order',
+        component: () => import('../components/Order.vue')
+      },
+      {
+        path: 'shop',
+        name: 'Shop',
+        component: () => import('../components/Shop.vue')
+      },
+      {
+        path: 'revenue',
+        component: () => import('../components/Revenue.vue')
+      },
+    ]
   },
-  
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    
-
   {
     path: '/customerHome',
     name: 'CustomerHome',

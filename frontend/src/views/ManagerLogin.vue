@@ -37,7 +37,7 @@ export default {
         .signInWithEmailAndPassword(this.email, this.password)
         .then(data => {
           console.log(data);
-          this.$router.replace({ name: 'ManagerHome' }); 
+          this.$router.replace({ name: 'Shop' }); 
           
 
           // 取email 用法
