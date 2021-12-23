@@ -12,26 +12,48 @@ const routes = [
     component: Home
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/Login.vue')
+    path: '/customerLogin',
+    name: 'CustomerLogin',
+    component: () => import('../views/CustomerLogin.vue')
   },
   {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../views/Register.vue')
+    path: '/managerLogin',
+    name: 'ManagerLogin',
+    component: () => import('../views/ManagerLogin.vue')
+  },
+  {
+    path: '/customerRegister',
+    name: 'CustomerRegister',
+    component: () => import('../views/CustomerRegister.vue')
   },
   {
     path: '/managerHome',
     name: 'ManagerHome',
-    component: () => import('../views/ManagerHome.vue')
+    component: () => import('../views/ManagerHome.vue'),
+    children:[
+      {
+        path: 'orderHistory',
+        component: () => import('../components/OrderHistory.vue')
+      },
+      {
+        path: 'tradeHistory',
+        component: () => import('../components/TradeHistory.vue')
+      },
+      {
+        path: 'order',
+        component: () => import('../components/Order.vue')
+      },
+      {
+        path: 'shop',
+        name: 'Shop',
+        component: () => import('../components/Shop.vue')
+      },
+      {
+        path: 'revenue',
+        component: () => import('../components/Revenue.vue')
+      },
+    ]
   },
-  
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    
-
   {
     path: '/customerHome',
     name: 'CustomerHome',
