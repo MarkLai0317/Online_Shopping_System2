@@ -30,7 +30,7 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.$router.replace({ name: "Login" });
+          this.$router.replace({ name: "Home" });
           console.log(this.firebase.auth().currentUser)
         });
     },

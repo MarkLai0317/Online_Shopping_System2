@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Login</h3>
+    <h1>Customer Login</h1>
     <form @submit.prevent="pressed">
       <div class="login">
         <input type="text" placeholder="login" v-model="email" />
@@ -11,6 +11,8 @@
       <button>Login</button>
     </form>
     <div class="error" v-if="error">{{error.message}}</div>
+    <h3>Don't have an account?</h3>
+    <el-botton @click="toRegister" type='text'>Register</el-botton>
   </div>
 </template>
 
@@ -26,6 +28,9 @@ export default {
     };
   },
   methods: {
+    toRegister(){
+      this.$router.push({ name: 'CustomerRegister'})
+    },
     pressed() {
       this.firebase
         .auth()

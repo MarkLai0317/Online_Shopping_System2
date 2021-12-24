@@ -1,16 +1,14 @@
 <template>
   <div>
     Tsai test
-    <!--
-    <Cart/>
-    -->
+    <ManagerShop></ManagerShop>
   </div>
 </template>
 <script>
-//import Cart from '../Cart.vue'
+import ManagerShop from '../ManagerShop.vue'
 export default{
   components:{
-    //Cart
+    ManagerShop
   }
 }
 </script>
