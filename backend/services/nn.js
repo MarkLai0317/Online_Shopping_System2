@@ -1,7 +1,20 @@
 const db = require('../services/db'); // dp 裡的function 用ㄌㄞquery 和 改資料的
 const listPerPage = 10;
 
+// customer show all shopName
+function getShopList() {
+  const data = db.query(`SELECT distinct ShopID, Name as ShopName 
+                         FROM Shop`, []);
 
+  return data;
+}
+// customre: getType
+function getType() {
+  const data = db.query(`SELECT distinct  Type 
+                         FROM For_Sell LEFT JOIN Product ON Product.ProductID = For_Sell.ProductID 
+                         AND Product.SupplierID = For_Sell.ProductSupplierID`, []);
+  return data;
+}
 // customer search product
 function searchProduct(ShopID, Type, page = 1) {
   const offset = (page - 1) * listPerPage;
@@ -9,7 +22,8 @@ function searchProduct(ShopID, Type, page = 1) {
   //  have shopid and type
   if (!ShopID && !Type) {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
-                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName                        
+                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
+                          Product.Type as Type, For_Sell.Num AS RemainNumber, For_Sell.Price as Price                         
                           FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
                           INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
@@ -24,7 +38,8 @@ function searchProduct(ShopID, Type, page = 1) {
     // only have type
   } else if (!ShopID) {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
-                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName                        
+                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
+                          Product.Type as Type, For_Sell.Num AS RemainNumber, For_Sell.Price as Price                        
                           FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
                           INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
@@ -39,7 +54,8 @@ function searchProduct(ShopID, Type, page = 1) {
     // only have shopID
   } else if (!Type) {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
-                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName                        
+                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
+                          Product.Type as Type, For_Sell.Num AS RemainNumber, For_Sell.Price as Price                        
                           FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
                           INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
@@ -52,7 +68,8 @@ function searchProduct(ShopID, Type, page = 1) {
     }
   } else {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
-                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName                        
+                          For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
+                          Product.Type as Type, For_Sell.Num AS RemainNumber, For_Sell.Price as Price                        
                           FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
                           INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
@@ -215,7 +232,7 @@ function buy(data) {
 // -------------------------------------------------------------------------------------
 // orderButton
 function orderButton(data) {
-  const { ShopManagerID, ProductSupplierID, ProductID, Num } = data;
+  const { StoreHouseID, ShopManagerID, ProductSupplierID, ProductID, Num } = data;
   // find shopID
   var s = db.query(`SELECT ShopID
                             FROM Shop
@@ -232,25 +249,37 @@ function orderButton(data) {
 
   // add data to order history
   db.run(` INSERT INTO Order_History (ShopManagerID, ShopID, ProductSupplierID, ProductID,  OrderHistoryID, Num)
-                            VALUES (@ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @OrderHistoryID, @Num)`,
+           VALUES (@ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @OrderHistoryID, @Num)`,
     { ShopManagerID, ShopID, ProductSupplierID, ProductID, OrderHistoryID, Num });
 
   // update have product number
-  // if data doesn't exist in Have, new a row in Have------------------==============================
+  // if data doesn't exist in Have, new a row in Have, else update have product number
   const res = db.query(` SELECT *
                           FROM Have 
-                          WHERE CustomerID = ?` , [CustomerID]);
+                          WHERE StoreHouseID = ? AND ShopManagerID = ? AND ProductSupplierID = ? AND
+                          ProductID = ? ` , [StoreHouseID, ShopManagerID, ProductSupplierID, ProductID]);
 
-  const result = db.run(` UPDATE Have
+  let message = 'Error in updating forSale product number';
+  if (res.length == 0) {
+    const r = db.run(`INSERT INTO Have (StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num)
+            VALUES (@StoreHouseID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num)`,
+      { StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num });
+
+    if (r.changes) {
+      message = 'add data to Have successfully'
+    }
+
+  } else {
+    const result = db.run(` UPDATE Have
                           SET Num = Num + @Num
                           WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
                           AND ProductID = @ProductID`, { Num, ShopManagerID, ProductSupplierID, ProductID });
 
-  let message = 'Error in updating forSale product number';
-  if (result.changes) {
-    message = 'update store house product number successfully';
-  }
 
+    if (result.changes) {
+      message = 'update store house product number successfully';
+    }
+  }
 
   return { message };
 }
@@ -294,6 +323,7 @@ function forSale(data) {
   return { message };
 }
 module.exports = {
+  getShopList, getType,
   searchProduct, clickCart, add, history, addProductNumInCart, subtractProductNumInCart, buy,
   orderButton, pageOrderHistory, pageTradeHistory, forSale
 }

@@ -2,6 +2,24 @@ const express = require('express');
 const router = express.Router();
 const nn = require('../services/nn');
 
+//  Customer: show all shopID and shopName 
+router.get('/getShopList', function (req, res, next) {
+    try {
+        res.json(nn.getShopList());
+    } catch (err) {
+        console.error(`Error while getting product `, err.message);
+        next(err);
+    }
+});
+// Customer: show all product.type
+router.get('/getType', function (req, res, next) {
+    try {
+        res.json(nn.getType());
+    } catch (err) {
+        console.error(`Error while getting product `, err.message);
+        next(err);
+    }
+});
 //   Customer: search product
 router.get('/searchProduct', function (req, res, next) {
     try {
