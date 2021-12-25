@@ -1,63 +1,94 @@
-const express = require('express');
-const router = express.Router();
-const ni = require('../services/ni');
+const db = require('../services/db'); // dp 裡的function 用ㄌㄞquery 和 改資料的
+const listPerPage = 10
 
-router.get('/Revenue', function(req, res, next) {
-    try {
-      res.json(ni.Revenue(req.query.ManagerID));
-    } catch(err) {
-      console.error(`Error while getting revenue `, err.message);
-      next(err);
-    }
-  });
-router.get('/TradeHistory', function(req, res, next) {
-    try {
-    res.json(ni.TradeHistory(req.query.ManagerID,req.query.page));
-    } catch(err) {
-    console.error(`Error while getting trade_history `, err.message);
-    next(err);
-    }  
-});
-router.get('/Shop', function(req, res, next) {
-    try {
-    res.json(ni.Shop(req.query.ManagerID));
-    } catch(err) {
-    console.error(`Error while getting shop `, err.message);
-    next(err);
-    }  
-});
-router.get('/OrderHistory', function(req, res, next) {
-    try {
-    res.json(ni.OrderHistory(req.query.ManagerID,req.query.page));
-    } catch(err) {
-    console.error(`Error while getting order_history `, err.message);
-    next(err);
-    }  
-});
-router.get('/Order', function(req, res, next) {
-    try {
-    res.json(ni.Order(req.query.ManagerID,req.query.page));
-    } catch(err) {
-    console.error(`Error while getting order `, err.message);
-    next(err);
-    }  
-});
-router.get('/Page', function(req, res, next) {
-    try {
-    res.json(ni.Page(req.query.ManagerID,req.query.page));
-    } catch(err) {
-    console.error(`Error while getting page `, err.message);
-    next(err);
-    }  
-});
-router.post('/register/Manager', function(req, res, next) {
-  try {
-    res.json(ni.CreateNewManager(req.body));
-  } catch(err) {
-    console.error(`Error while adding Manager `, err.message);
-    next(err);
+//manager revenue
+function Revenue(ManagerID){
+  // return ManagerID;
+
+  const data= db.query(`SELECT Time,Price
+                        from Trade_History
+                        where ShopManagerID= ?`,[ManagerID]);
+  return {data};
+}
+//manager tradehistory
+function TradeHistory(ManagerID,page=1){
+  const offset = (page - 1) * listPerPage;
+  const data= db.query(`select Trade_History.Time,Trade_History.HistoryID,Product.Name,Trade_History.Price,Trade_History.Num
+                        from Trade_History,
+                        Product where Trade_History.ShopManagerID= ? and 
+                        Trade_History.ProductSupplierID=Product.SupplierID and 
+                        Trade_History.ProductID=Product.ProductID
+                        LIMIT ?, ? `,[ManagerID,offset, listPerPage])
+  //const meta = {page};
+  return {
+    data
   }
-});
-
-
-module.exports = router;
+}
+//manager shop
+function Shop(ManagerID){
+  const data=db.query(`select Product.Name,Product.SupplierID,For_Sell.Num,For_Sell.Price from Product,
+                       For_Sell where For_Sell.ProductSupplierID=Product.SupplierID and 
+                       For_Sell.ProductID=Product.ProductID and For_Sell.ShopManagerID= ?`,[ManagerID])
+  return{data};
+}
+// manager OrderHistory
+function OrderHistory(ManagerID,page=1){
+  const offset = (page - 1) * listPerPage;
+  const data= db.query(`select OrderHistoryID,Order_History.Time,Product.Name,Order_History.Num,Supplier.Name
+                        from Order_History,Product,Supplier
+                        where Order_History.ProductSupplierID=Product.SupplierID and 
+                        Order_History.ProductID=Product.ProductID and Product.SupplierID=Supplier.SupplierID and ShopManagerID= ?
+                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
+  //const meta = {page};
+  return{data}
+}
+//manager order
+function Order(ManagerID,page=1){
+  const offset = (page - 1) * listPerPage;
+  const data= db.query(`select Product.Name
+                        from Order_History,Product
+                        where Order_History.ProductSupplierID=Product.SupplierID and Order_History.ProductID=Product.ProductID and ShopManagerID= ?
+                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
+  //const meta={page};
+  return{data}
+}
+//manager page
+function Page(ManagerID,page){
+  const offset = (page - 1) * listPerPage;
+  const data= db.query(`select Product.Name
+                        from Order_History,Product
+                        where Order_History.ProductSupplierID=Product.SupplierID and Order_History.ProductID=Product.ProductID and ShopManagerID= ?
+                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
+  const meta={page};
+  return{data,meta}
+}
+//manager create account
+function CreateNewManager(data){
+  
+  const {Email, PhoneNum,ShopName} = data;
+  const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, NULL, @PhoneNum)`
+                         ,{Email, PhoneNum});
+  if (result[0] != undefined) {
+    return 'This Email exists already.';
+  }
+  var max =db.query(`SELECT MAX(ShopID) as mm from Shop`,[])
+  var s = JSON.stringify(max[0].mm);
+  var ShopID = JSON.parse(s);
+  ShopID=ShopID+1;
+  db.run(`INSERT INTO Shop(ManagerID,ShopID,Name,TotalRevenue) VALUES (@Email,@ShopID,@ShopName, 0)`
+                          ,{Email,ShopID,ShopName});
+  let message = 'Error in creating Manager';
+    if (result.changes) {
+    message = 'Manager created successfully';
+  }
+  return {message};
+}
+module.exports = {
+  Revenue,
+  TradeHistory,
+  Shop,
+  OrderHistory,
+  Order,
+  Page,
+  CreateNewManager
+}
