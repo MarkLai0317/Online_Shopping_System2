@@ -2,6 +2,7 @@
     <div>
       <MarkComponent :prop="testProp"></MarkComponent>
       <el-button @click="registerCustomer()">register</el-button>
+      <div class="error" v-if="error">{{error}}</div>
     </div>
 </template>
 
@@ -51,7 +52,11 @@ export default {
           name: 'n2'
         }
       ],
-      testProp: 'testProp string'
+      testProp: 'testProp string',
+      shopID: '',
+      type: '',
+      page: 1,
+      error: ''
     }
   },
   methods:{
@@ -62,21 +67,22 @@ export default {
     getSensorData() {
 
       //get 寫法
-      this.axios.get('http://127.0.0.1:9000/mark/searchProduct', {
+      this.axios.get('http://127.0.0.1:9000/nn/searchProduct', {
         params: {
           //get 參數放這裡
-          shopID: 90,
-          type: 'fruit',
-          page: 1
+          ShopID: this.shopID,
+          Type: this.type,
+          page: this.page
         }
       })
-      .then(function (response) {//  get 回來的 資料 處理
+      .then(response=> {//  get 回來的 資料 處理
         let res = JSON.stringify(response.data); // 先 變字串
         let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
         // 就可以做其他處理 像存到data 裡面
-        console.log(resobj)
+        console.log(resobj.ProductID)
       })
-      .catch(function (error) {
+      .catch(error => {
         console.log(error);
       })
       .then(function () {
@@ -88,18 +94,42 @@ export default {
       //post 寫法
       this.axios.post('http://127.0.0.1:9000/mark/register/customer', {
         // post 參數放這裡
-        Email:'test1@gmail.com', 
+        Email: 'test1@gmail.com',
         Name: 'test1',
-        PhoneNum: '0911222333'
+        PhoneNum: '0919191919'
       })
-      .then(function (response) {// 回傳的 response 處理
+      .then(response => {// 回傳的 response 處理
         console.log(response);
+        let res = JSON.stringify(response.data); // 先 變字串
+        let resobj = JSON.parse(res) 
+        if(resobj.error){
+          this.error = resobj.error
+        }
+        else{
+          /*this.firebase
+            .auth()
+            .createUserWithEmailAndPassword(this.email, this.password)
+            .then(() => {
+              console.log("here");
+              this.$router.replace({ name: "Buy" });
+            })
+            .catch(error => (this.error = error));*/
+          console.log('success')
+        }
+
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(error => {
+        console.log(error)
+        this.error = 'register fail'
+        console.log(this.page)
       });
     }
     
   }
 }
 </script>
+<style scoped>
+.error {
+  color: red;
+}
+</style>
