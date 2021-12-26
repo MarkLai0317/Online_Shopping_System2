@@ -70,22 +70,22 @@ function CreateNewManager(data){
   const shopp=db.query(`select * from Shop`,[]);
   for(i=0;i<count.length;i++){
     if(Email==count[i].ManagerID){
-      let message='This Email exists already.';
+      let message='Email used.';
       return {message};
     }
     if(Name==count[i].Name){
-      let message='This Name exists already.';
+      let message='Name used.';
       return {message};
     }
     if(PhoneNum==count[i].PhoneNum){
-      let message='This Phone Number exists already.';
+      let message='Phone Number used.';
       return {message};
     }
     
   }
   for(i=0;i<shopp.length;i++)
     if(ShopName==shopp[i].Name){
-      let message='This Shop-Name exists already.';
+      let message='Shop-Name used.';
       return {message};
     }
   const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)`
