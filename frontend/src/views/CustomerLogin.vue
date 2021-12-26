@@ -19,6 +19,7 @@
 <script>
 //import firebase from "firebase/compat/app";
 //import "firebase/auth";
+import { ElMessage } from 'element-plus'
 export default {
   data() {
     return {
@@ -44,7 +45,12 @@ export default {
         })
         .catch(error => {
           this.error = error;
+          //console.log(error)
+          this.wrongPassword()
         });
+    },
+    wrongPassword(){
+      ElMessage.error('wrong password or email')
     }
   }
 };
