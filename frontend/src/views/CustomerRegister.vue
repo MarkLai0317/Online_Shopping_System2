@@ -9,10 +9,13 @@
       <div class="password">
         <input type="password" v-model="password" placeholder="password" />
       </div>
+      <div class="password">
+        <input type="password" v-model="passwordConfirm" placeholder="password confirm" />
+      </div>
       <div class="phoneNumber">
         <input type="phoneNumber" placeholder="phoneNumber" v-model="phoneNumber"/>
       </div>
-      <button type="submit">Register</button>
+      <button type="submit"  :disabled="registerDisable">Register</button>
     </form>
   </div>
 </template>
@@ -25,9 +28,16 @@ export default {
     return {
       email: "",
       password: "",
+      passwordConfirm: "",
       phoneNumber: "",
       error: ""
     };
+  },
+  computed:{
+    registerDisable(){
+      return !(this.password == this.passwordConfirm) || this.password == '' || this.email == ''
+              || this.phoneNumber == '' || this.phoneNumber.length != 10 || !(/^\d+$/.test(this.phoneNumber)) 
+    }
   },
   methods: {
     pressed() {
@@ -39,8 +49,10 @@ export default {
           this.$router.replace({ name: "Buy" });
         })
         .catch(error => (this.error = error));
+      
     }
-  }
+  },
+
 };
 </script>
 
