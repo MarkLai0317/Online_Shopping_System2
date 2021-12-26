@@ -12,7 +12,7 @@
       <template #default="scope">
         <el-button
           size="mini"
-          @click="add(scope.$index, scope.row)">Add</el-button>
+          @click="pressAdd(scope.$index, scope.row)">Add</el-button>
       </template>
     </el-table-column>
     <!-- -->
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     ///////////
-    add(index,row) {
+    pressAdd(index,row) {
       console.log(index)
       console.log(row)
     },
