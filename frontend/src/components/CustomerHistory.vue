@@ -26,28 +26,6 @@
         </el-table>
       </el-main>
       <p />
-      <el-header>
-        <p />
-        <el-row :gutter="30" justify="start">
-          <el-col :span="7">
-            <div class="grid-content">{{ orderdata1.Date }}</div>
-          </el-col>
-          <el-col :span="4" :offset="5">
-            <div class="grid-content">ID:{{ orderdata1.Oid }}</div>
-          </el-col>
-          <el-col :span="3" :offset="2">
-            <div class="grid-content">${{ orderdata1.Price }}</div>
-          </el-col>
-        </el-row>
-      </el-header>
-      <el-main>
-        <el-table :data="tableData1">
-          <el-table-column prop="Name" label="Name" width="220" />
-          <el-table-column prop="Shop" label="Shop" width="150" />
-          <el-table-column prop="Number" label="Number" width="80" />
-          <el-table-column prop="Price" label="Price" width="100" />
-        </el-table>
-      </el-main>
     </el-container>
      <el-button-group>
         <el-button type="primary" @click="lastPage">Last Page</el-button>
