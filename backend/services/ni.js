@@ -74,19 +74,19 @@ function CreateNewManager(data){
       return {message};
     }
     if(Name==count[i].Name){
-      let message='Name used.';
-      return {message};
+      let error='Name used.';
+      return {error};
     }
     if(PhoneNum==count[i].PhoneNum){
-      let message='Phone Number used.';
-      return {message};
+      let error='Phone Number used.';
+      return {error};
     }
     
   }
   for(i=0;i<shopp.length;i++)
     if(ShopName==shopp[i].Name){
-      let message='Shop-Name used.';
-      return {message};
+      let error='Shop-Name used.';
+      return {error};
     }
   const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)`
                          ,{Email,Name, PhoneNum});
@@ -98,12 +98,12 @@ function CreateNewManager(data){
   ShopID=ShopID+1;
   db.run(`INSERT INTO Shop(ManagerID,ShopID,Name,TotalRevenue) VALUES (@Email,@ShopID,@ShopName, 0)`
                           ,{Email,ShopID,ShopName});
-  let message='Error in creating Manager';
+  let error='Error in creating Manager';
   
     if (result.changes) {
-       message='Manager created successfully';
+       error='';
   }
-  return {message};
+  return {error};
 }
 module.exports = {
   Revenue,
