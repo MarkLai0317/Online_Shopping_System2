@@ -5,11 +5,16 @@ const listPerPage = 10
 function createNewCustomer(data){
   const {Email, Name, PhoneNum} = data
   const result = db.run('INSERT INTO Customer (CustomerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)', {Email, Name, PhoneNum});
-  let message = 'Error in creating Customer';
+  let error = '';
   if (result.changes) {
-    message = 'Customer created successfully';
+    let message = 'Customer created successfully';
+    return {message, error}
+  }else{
+    error = 'Customer created fail'
+    return {error}
   }
-  return {message};
+
+  
 }
 
 function searchProduct(shopID, type, page){

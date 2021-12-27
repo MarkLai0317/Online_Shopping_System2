@@ -8,17 +8,18 @@
       <div class="password">
         <input type="password" placeholder="password" v-model="password" />
       </div>
-      <button>Login</button>
+      <button class="loginButton">Login</button>
     </form>
     <div class="error" v-if="error">{{error.message}}</div>
     <h3>Don't have an account?</h3>
-    <el-botton @click="toRegister" type='text'>Register</el-botton>
+    <el-button @click="toRegister">Register</el-button>
   </div>
 </template>
 
 <script>
 //import firebase from "firebase/compat/app";
 //import "firebase/auth";
+import { ElMessage } from 'element-plus'
 export default {
   data() {
     return {
@@ -44,7 +45,12 @@ export default {
         })
         .catch(error => {
           this.error = error;
+          //console.log(error)
+          this.wrongPassword()
         });
+    },
+    wrongPassword(){
+      ElMessage.error('wrong password or email')
     }
   }
 };
@@ -60,7 +66,7 @@ input {
   margin: 20px;
   font-size: 21px;
 }
-button {
+.loginButton {
   width: 400px;
   height: 75px;
   font-size: 100%;

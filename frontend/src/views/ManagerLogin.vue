@@ -46,6 +46,8 @@ export default {
         .catch(error => {
           this.error = error;
         });
+      
+      // manager login api
     }
   }
 };

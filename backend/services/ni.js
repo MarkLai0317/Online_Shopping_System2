@@ -65,21 +65,43 @@ function Page(ManagerID,page){
 //manager create account
 function CreateNewManager(data){
   
-  const {Email, PhoneNum,ShopName} = data;
-  const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, NULL, @PhoneNum)`
-                         ,{Email, PhoneNum});
-  if (result[0] != undefined) {
-    return 'This Email exists already.';
+  const {Email,Name, PhoneNum,ShopName} = data;
+  const count=db.query(`select * from Manager `,[]);
+  const shopp=db.query(`select * from Shop`,[]);
+  for(i=0;i<count.length;i++){
+    if(Email==count[i].ManagerID){
+      let message='Email used.';
+      return {message};
+    }
+    if(Name==count[i].Name){
+      let message='Name used.';
+      return {message};
+    }
+    if(PhoneNum==count[i].PhoneNum){
+      let message='Phone Number used.';
+      return {message};
+    }
+    
   }
+  for(i=0;i<shopp.length;i++)
+    if(ShopName==shopp[i].Name){
+      let message='Shop-Name used.';
+      return {message};
+    }
+  const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)`
+                         ,{Email,Name, PhoneNum});
+  
+  
   var max =db.query(`SELECT MAX(ShopID) as mm from Shop`,[])
   var s = JSON.stringify(max[0].mm);
   var ShopID = JSON.parse(s);
   ShopID=ShopID+1;
   db.run(`INSERT INTO Shop(ManagerID,ShopID,Name,TotalRevenue) VALUES (@Email,@ShopID,@ShopName, 0)`
                           ,{Email,ShopID,ShopName});
-  let message = 'Error in creating Manager';
+  let message='Error in creating Manager';
+  
     if (result.changes) {
-    message = 'Manager created successfully';
+       message='Manager created successfully';
   }
   return {message};
 }
