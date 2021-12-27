@@ -5,16 +5,17 @@ const listPerPage = 10;
 function getShopList() {
   const data = db.query(`SELECT distinct ShopID, Name as ShopName 
                          FROM Shop`, []);
-
-  return data;
+  return { data };
 }
+
 // customre: getType
 function getType() {
   const data = db.query(`SELECT distinct  Type 
                          FROM For_Sell LEFT JOIN Product ON Product.ProductID = For_Sell.ProductID 
                          AND Product.SupplierID = For_Sell.ProductSupplierID`, []);
-  return data;
+  return { data };
 }
+
 // customer search product
 function searchProduct(ShopID, Type, page = 1) {
   const offset = (page - 1) * listPerPage;
@@ -29,11 +30,10 @@ function searchProduct(ShopID, Type, page = 1) {
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
                           
                           LIMIT ?, ?`, [offset, listPerPage]);
-    const meta = { page };
-    return {
-      data,
-      meta
-    }
+    // const meta = { page };
+    return { data };
+
+
 
     // only have type
   } else if (!ShopID) {
@@ -45,11 +45,10 @@ function searchProduct(ShopID, Type, page = 1) {
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
                           WHERE Type = ? 
                           LIMIT ?, ?`, [Type, offset, listPerPage]);
-    const meta = { page };
-    return {
-      data,
-      meta
-    }
+    // const meta = { page };
+
+    return { data };
+
 
     // only have shopID
   } else if (!Type) {
@@ -62,10 +61,8 @@ function searchProduct(ShopID, Type, page = 1) {
                           WHERE Shop.ShopID = ?
                           LIMIT ?, ?`, [ShopID, offset, listPerPage]);
     const meta = { page };
-    return {
-      data,
-      meta
-    }
+    return { data };
+
   } else {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
                           For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
@@ -75,11 +72,8 @@ function searchProduct(ShopID, Type, page = 1) {
                                               AND Product.SupplierID = For_Sell.ProductSupplierID
                           WHERE Type = ? AND Shop.ShopID = ?
                           LIMIT ?, ?`, [Type, ShopID, offset, listPerPage]);
-    const meta = { page };
-    return {
-      data,
-      meta
-    }
+    // const meta = { page };
+    return { data };
   }
 }
 
@@ -90,7 +84,7 @@ function clickCart(CustomerID) {
                           AND For_Sell.ProductSupplierID = Cart.ProductSupplierID
                           AND For_Sell.ProductID = Cart.ProductID
                           WHERE Cart.CustomerID = ?` , [CustomerID]);
-  return data
+  return { data };
 }
 
 function add(addObj) {
@@ -115,19 +109,20 @@ function add(addObj) {
                           WHERE CustomerID = ? AND ShopManagerID = ? AND ProductSupplierID = ? AND ProductID = ?`, [CustomerID, ShopManagerID, ProductSupplierID, ProductID]);
   // return res1[0];
   if (res1[0] != undefined) {
-    return 'Product exist already.';
+    let error = 'Product exist already.';
+    return { error };
   }
   const Num = 1;
   const result = db.run(`INSERT INTO Cart (CustomerID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num, Price)
                           VALUES (@CustomerID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num, @Price)`
     , { CustomerID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num, Price });
 
-  let message = 'Error in creating quote';
+  let error = 'Error in adding product.';
   if (result.changes) {
-    message = 'add product successfully';
+    error = '';
   }
 
-  return { message };
+  return { error };
 }
 
 // history
@@ -136,7 +131,7 @@ function history(CustomerID) {
                           FROM ( Trade_History LEFT JOIN Product ON Trade_History.ProductSupplierID = Product.SupplierID 
                           AND Trade_History.ProductID = Product.ProductID ) LEFT JOIN Shop ON Trade_History.ShopID = Shop.ShopID
                           WHERE CustomerID = ?` , [CustomerID]);
-  return data
+  return { data };
 }
 
 // +(cart)
@@ -148,12 +143,12 @@ function addProductNumInCart(data) {
                           WHERE CustomerID = @CustomerID AND ShopID = @ShopID AND ProductSupplierID = @ProductSupplierID 
                           AND ProductID = @ProductID`, { CustomerID, ShopID, ProductSupplierID, ProductID });
 
-  let message = 'Error in creating quote';
+  let error = 'Error in increasing number of product.';
   if (result.changes) {
-    message = 'update product number successfully';
+    error = '';
   }
 
-  return { message };
+  return { error };
 }
 
 // -(cart)
@@ -165,23 +160,25 @@ function subtractProductNumInCart(data) {
                           WHERE CustomerID = @CustomerID AND ShopID = @ShopID AND ProductSupplierID = @ProductSupplierID 
                           AND ProductID = @ProductID`, { CustomerID, ShopID, ProductSupplierID, ProductID });
 
-  let message = 'Error in creating quote';
+  let error = 'Error in decreasing number of product.';
   if (result.changes) {
-    message = 'update product number successfully';
+    error = '';
   }
 
-  return { message };
+  return { error };
 }
 
 // buy
 function buy(data) {
   const { CustomerID } = data;
+  let error = 'You have nothing in your cart.';
 
+  // take all the products of this customer in cart 
   const res1 = db.query(` SELECT *
                           FROM Cart 
                           WHERE CustomerID = ?` , [CustomerID]);
   if (res1.length == 0) {
-    return;
+    return { error };
   }
   for (i = 0; i < res1.length; i++) {
     cid = res1[i].CustomerID;
@@ -224,8 +221,8 @@ function buy(data) {
     hid = hid + 1;
   }
 
-  let message = 'buy the product successfully';
-  return { message };
+  error = '';
+  return { error };
 
 }
 
@@ -233,6 +230,7 @@ function buy(data) {
 // orderButton
 function orderButton(data) {
   const { StoreHouseID, ShopManagerID, ProductSupplierID, ProductID, Num } = data;
+
   // find shopID
   var s = db.query(`SELECT ShopID
                             FROM Shop
@@ -259,14 +257,14 @@ function orderButton(data) {
                           WHERE StoreHouseID = ? AND ShopManagerID = ? AND ProductSupplierID = ? AND
                           ProductID = ? ` , [StoreHouseID, ShopManagerID, ProductSupplierID, ProductID]);
 
-  let message = 'Error in updating forSale product number';
+  let error = 'Error in updating forSale product number.';
   if (res.length == 0) {
     const r = db.run(`INSERT INTO Have (StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num)
             VALUES (@StoreHouseID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num)`,
       { StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num });
 
     if (r.changes) {
-      message = 'add data to Have successfully'
+      error = ''
     }
 
   } else {
@@ -277,11 +275,11 @@ function orderButton(data) {
 
 
     if (result.changes) {
-      message = 'update store house product number successfully';
+      error = '';
     }
   }
 
-  return { message };
+  return { error };
 }
 
 // pageOrderHistory
@@ -292,7 +290,7 @@ function pageOrderHistory(ManagerID, page = 1) {
                           AND Order_History.ProductID = Product.ProductID ) LEFT JOIN Supplier ON Product.SupplierID = Supplier.SupplierID
                           WHERE ShopManagerID = ?
                           LIMIT ?, ?` , [ManagerID, offset, listPerPage]);
-  return data
+  return { data };
 }
 
 // pageTradeHistory
@@ -303,7 +301,7 @@ function pageTradeHistory(ManagerID, page = 1) {
                           AND Trade_History.ProductID = Product.ProductID ) 
                           WHERE ShopManagerID = ?
                           LIMIT ?, ?` , [ManagerID, offset, listPerPage]);
-  return data
+  return { data }
 }
 
 // forSale
@@ -315,13 +313,14 @@ function forSale(data) {
                           WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
                           AND ProductID = @ProductID`, { Num, ShopManagerID, ProductSupplierID, ProductID });
 
-  let message = 'Error in updating forSale product number';
+  let error = 'Error in updating forSale product number.';
   if (result.changes) {
-    message = 'update forSale product number successfully';
+    error = '';
   }
 
-  return { message };
+  return { error };
 }
+
 module.exports = {
   getShopList, getType,
   searchProduct, clickCart, add, history, addProductNumInCart, subtractProductNumInCart, buy,
