@@ -13,16 +13,33 @@ function Revenue(ManagerID){
 //manager tradehistory
 function TradeHistory(ManagerID,page=1){
   const offset = (page - 1) * listPerPage;
-  const data= db.query(`select Trade_History.Time,Trade_History.HistoryID,Product.Name,Trade_History.Price,Trade_History.Num
+  let data=[];
+  const hid= db.query(`select Trade_History.Time,Trade_History.HistoryID,Product.Name,Trade_History.Price,Trade_History.Num
                         from Trade_History,
                         Product where Trade_History.ShopManagerID= ? and 
                         Trade_History.ProductSupplierID=Product.SupplierID and 
                         Trade_History.ProductID=Product.ProductID
-                        LIMIT ?, ? `,[ManagerID,offset, listPerPage])
-  //const meta = {page};
-  return {
-    data
+                        GROUP BY Trade_History.HistoryID`,[ManagerID])
+  for(i=0;i<hid.length;i++){
+    data.push({HistoryID:hid[i].HistoryID,
+               Receipt:[]
+              })
+    var HID=JSON.stringify(hid[i].HistoryID);
+    //Integer.parseInt(jsonObj.get("data[i].HistoryID"));
+    let product= db.query(`select Trade_History.Time,Product.Name,Trade_History.Price,Trade_History.Num
+                             from Trade_History,
+                             Product where Trade_History.ShopManagerID= ? and 
+                             Trade_History.ProductSupplierID=Product.SupplierID and 
+                             Trade_History.ProductID=Product.ProductID and Trade_History.HistoryID= ? `
+                             ,[ManagerID,HID])
+                             
+                             
+    data[i].Receipt=product
+  
   }
+  //const meta = {page};  
+  return {data};
+  
 }
 //manager shop
 function Shop(ManagerID){
@@ -70,22 +87,22 @@ function CreateNewManager(data){
   const shopp=db.query(`select * from Shop`,[]);
   for(i=0;i<count.length;i++){
     if(Email==count[i].ManagerID){
-      let message='Email used.';
-      return {message};
+      let error='This Email exists already.';
+      return {error};
     }
     if(Name==count[i].Name){
-      let error='Name used.';
+      let error='This Name exists already.';
       return {error};
     }
     if(PhoneNum==count[i].PhoneNum){
-      let error='Phone Number used.';
+      let error='This Phone Number exists already.';
       return {error};
     }
     
   }
   for(i=0;i<shopp.length;i++)
     if(ShopName==shopp[i].Name){
-      let error='Shop-Name used.';
+      let error='This Shop-Name exists already.';
       return {error};
     }
   const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)`
@@ -98,7 +115,7 @@ function CreateNewManager(data){
   ShopID=ShopID+1;
   db.run(`INSERT INTO Shop(ManagerID,ShopID,Name,TotalRevenue) VALUES (@Email,@ShopID,@ShopName, 0)`
                           ,{Email,ShopID,ShopName});
-  let error='Error in creating Manager';
+  let message='Error in creating Manager';
   
     if (result.changes) {
        error='';
