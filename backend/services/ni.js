@@ -100,11 +100,11 @@ function CreateNewManager(data){
     }
     
   }
-  for(i=0;i<shopp.length;i++)
+  for(i=0;i<shopp.length;i++){
     if(ShopName==shopp[i].Name){
       let error='This Shop-Name exists already.';
       return {error};
-    }
+    }}//
   const result = db.run(`INSERT INTO Manager (ManagerID, Name, PhoneNum) VALUES (@Email, @Name, @PhoneNum)`
                          ,{Email,Name, PhoneNum});
   
