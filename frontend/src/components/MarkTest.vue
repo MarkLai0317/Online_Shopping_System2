@@ -55,7 +55,7 @@ export default {
       testProp: 'testProp string',
       shopID: '',
       type: '',
-      page: 1,
+      page: 3,
       error: ''
     }
   },
@@ -72,7 +72,8 @@ export default {
           //get 參數放這裡
           ShopID: this.shopID,
           Type: this.type,
-          page: this.page
+          page: this.page,
+      //    ManagerID: this.firebase.auth().currentUser.email
         }
       })
       .then(response=> {//  get 回來的 資料 處理
@@ -80,7 +81,8 @@ export default {
         let resobj = JSON.parse(res) // 再變 object
         this.table = resobj
         // 就可以做其他處理 像存到data 裡面
-        console.log(resobj.ProductID)
+        console.log(resobj.data)
+        
       })
       .catch(error => {
         console.log(error);
