@@ -61,7 +61,7 @@ function OrderHistory(ManagerID,page=1){
 }
 //manager order
 function Order(){
-  const data= db.query(`select Name,ProductID,SupplierID
+  const data= db.query(`select *
                         from Product
                         `,[])
   //const meta={page};
