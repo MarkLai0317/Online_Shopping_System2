@@ -27,10 +27,11 @@
       </el-main>
       <p />
     </el-container>
-     <el-button-group>
-        <el-button type="primary" @click="lastPage">Last Page</el-button>
-        <el-button type="primary" @click="nextPage">Next Page</el-button>
-      </el-button-group>
+    <el-button-group>
+      <el-button type="primary" @click="lastPage">Last Page</el-button>
+      <box class="pageBox">{{ this.page }}</box>
+      <el-button type="primary" @click="nextPage">Next Page</el-button>
+    </el-button-group>
   </div>
 </template>
 
@@ -38,11 +39,15 @@
 export default {
   data() {
     return {
+      
+      page: 1,
+
       orderdata: {
         Date: "2021-12-12",
         Oid: "12345678",
         Price: 6229,
       },
+
       tableData: [
         {
           Name: "Food",
@@ -74,38 +79,18 @@ export default {
         Oid: "1678asdt",
         Price: 6239,
       },
-      tableData1: [
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-      ],
     };
   },
   methods: {
-    lastPage(){
+    lastPage() {
       //last page
       console.log("last page");
     },
-     nextPage(){
+    nextPage() {
       //next page
       console.log("next page");
     },
-  }
+  },
 };
 </script>
 
