@@ -95,44 +95,5 @@ export default {
 </script>
 
 <style>
-box {
-  font-size: 24px;
-  color: white;
-  padding: 10px;
-  background-color: rgb(248, 106, 70);
-}
-.el-table {
-  --el-table-tr-bg-color: #f0f0f0;
-  width: 550px;
-  font-size: 14px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.el-container {
-  width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
 
-.el-header {
-  background-color: #3a89f1;
-  color: var(--el-text-color-primary);
-  text-align: left;
-  height: 50px;
-}
-.el-main {
-  background-color: #9bcdff;
-  color: var(--el-text-color-primary);
-  text-align: center;
-}
-.grid-content {
-  color: white;
-  font-size: 18px;
-  text-align: left;
-}
-.el-button {
-  margin-left: auto;
-  margin-right: auto;
-  align: center;
-}
 </style>
