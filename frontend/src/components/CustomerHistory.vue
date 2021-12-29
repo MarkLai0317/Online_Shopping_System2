@@ -1,18 +1,18 @@
 <template>
   <div>
     <el-container>
-      <box>Order history</box>
+      <p>Order history</p>
       <p />
       <el-header>
         <p />
         <el-row :gutter="30" justify="start">
-          <el-col :span="7">
+          <el-col :span="2">
             <div class="grid-content">{{ orderdata.Date }}</div>
           </el-col>
-          <el-col :span="4" :offset="5">
+          <el-col :span="4" :offset="0">
             <div class="grid-content">ID:{{ orderdata.Oid }}</div>
           </el-col>
-          <el-col :span="3" :offset="2">
+          <el-col :span="3" :offset="0">
             <div class="grid-content">${{ orderdata.Price }}</div>
           </el-col>
         </el-row>
@@ -27,11 +27,9 @@
       </el-main>
       <p />
     </el-container>
-    <el-button-group>
-      <el-button type="primary" @click="lastPage">Last Page</el-button>
-      <box class="pageBox">{{ this.page }}</box>
-      <el-button type="primary" @click="nextPage">Next Page</el-button>
-    </el-button-group>
+    <el-button  @click="lastPage">Last Page</el-button>
+    <box class="pageBox">{{ this.page }}</box>
+    <el-button  @click="nextPage">Next Page</el-button>
   </div>
 </template>
 
@@ -39,7 +37,6 @@
 export default {
   data() {
     return {
-      
       page: 1,
 
       orderdata: {
@@ -83,10 +80,14 @@ export default {
   },
   methods: {
     lastPage() {
+       if (this.page - 1 > 0) {
+        this.page -= 1;
+       }
       //last page
       console.log("last page");
     },
     nextPage() {
+      this.page += 1;
       //next page
       console.log("next page");
     },
@@ -95,5 +96,7 @@ export default {
 </script>
 
 <style>
-
+.pageBox {
+  padding: 10px;
+}
 </style>
