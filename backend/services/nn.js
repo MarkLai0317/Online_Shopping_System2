@@ -114,7 +114,7 @@ function add(addObj) {
   }
   const Num = 1;
   const result = db.run(`INSERT INTO Cart (CustomerID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num, Price)
-                          VALUES (@CustomerID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num, @Price)`
+                         VALUES (@CustomerID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num, @Price)`
     , { CustomerID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num, Price });
 
   let error = 'Error in adding product.';
@@ -125,12 +125,60 @@ function add(addObj) {
   return { error };
 }
 
-// history
-function history(CustomerID) {
-  const data = db.query(` SELECT Time AS Time, HistoryID AS HistoryID, Product.Name AS ProductName, Shop.Name AS ShopName, Num, Price
-                          FROM ( Trade_History LEFT JOIN Product ON Trade_History.ProductSupplierID = Product.SupplierID 
-                          AND Trade_History.ProductID = Product.ProductID ) LEFT JOIN Shop ON Trade_History.ShopID = Shop.ShopID
-                          WHERE CustomerID = ?` , [CustomerID]);
+
+// hisNumber
+function getHistoryNum(CustomerID) {
+  var numHid = db.query(` SELECT  COUNT(DISTINCT HistoryID) AS temp
+                      FROM  Trade_History 
+                      WHERE CustomerID = ?` , [CustomerID]);
+  var s = JSON.stringify(numHid[0].temp);
+  numHid = JSON.parse(s);
+
+  return numHid;
+}
+
+// history ( page : 1 ~ x )
+function history(CustomerID, page) {
+  // count HistoryID index
+  const index = page - 1;
+
+  // get HistoryID's number
+  const numHid = getHistoryNum(CustomerID);
+
+  // take specified HistoryID
+  const res = db.query(`  SELECT  distinct HistoryID
+                          FROM  Trade_History 
+                          WHERE CustomerID = ?
+                          ORDER BY HistoryID` , [CustomerID]);
+  const hid = res[index].HistoryID;
+
+  // count totalPrice & get Time
+  var tp_time = db.query(` SELECT  SUM(Num * Price) AS tp, Time
+                              FROM  Trade_History 
+                              WHERE CustomerID = ? AND HistoryID = ?` , [CustomerID, hid]);
+  var s = JSON.stringify(tp_time[0].tp);
+  var totalPrice = JSON.parse(s);
+  s = JSON.stringify(tp_time[0].Time);
+  var Time = JSON.parse(s);
+
+  const temp_data = db.query(`  SELECT Product.Name AS ProductName, Shop.Name AS ShopName, Num, Price
+                                FROM ( Trade_History LEFT JOIN Product ON Trade_History.ProductSupplierID = Product.SupplierID 
+                                      AND Trade_History.ProductID = Product.ProductID ) LEFT JOIN Shop ON Trade_History.ShopID = Shop.ShopID
+                                WHERE CustomerID = ? AND HistoryID = ?` , [CustomerID, hid]);
+
+  // creat the return data
+  var data = [];
+  var r = [];
+  r = (temp_data);
+
+  data.push({
+    HistoryID: hid,
+    Time: Time,
+    TotalPrice: totalPrice,
+    PurchaseHistory: r
+  });
+
+
   return { data };
 }
 
@@ -180,6 +228,14 @@ function buy(data) {
   if (res1.length == 0) {
     return { error };
   }
+
+  // find max hid
+  var h = db.query(`SELECT MAX(HistoryID) as hh
+  FROM Trade_History `, []);
+  var s = JSON.stringify(h[0].hh);
+  var hid = JSON.parse(s);
+  hid = hid + 1;
+
   for (i = 0; i < res1.length; i++) {
     cid = res1[i].CustomerID;
     mid = res1[i].ShopManagerID;
@@ -189,12 +245,7 @@ function buy(data) {
     num = res1[i].Num;
     price = res1[i].Price;
 
-    // find max hid
-    var h = db.query(`SELECT MAX(HistoryID) as hh
-                      FROM Trade_History `, []);
-    var s = JSON.stringify(h[0].hh);
-    var hid = JSON.parse(s);
-    hid = hid + 1;
+
     // add to Trade History
     const result = db.run(` INSERT INTO Trade_History (CustomerID, ShopManagerID, ShopID, ProductSupplierID, ProductID,  HistoryID, Num, Price)
                             VALUES (@cid, @mid, @shopid, @supplierid, @pid, @hid, @num, @price)`,
@@ -218,13 +269,18 @@ function buy(data) {
             WHERE  ShopID = @shopid `, { num, price, shopid });
 
 
-    hid = hid + 1;
+
   }
 
   error = '';
   return { error };
 
 }
+// data = []
+// data.push({
+//   HID: hid,
+//   receipt: []
+// })
 
 // -------------------------------------------------------------------------------------
 // orderButton
@@ -233,8 +289,8 @@ function orderButton(data) {
 
   // find shopID
   var s = db.query(`SELECT ShopID
-                            FROM Shop
-                            WHERE ManagerID = ?`, [ShopManagerID]);
+                    FROM Shop
+                    WHERE ManagerID = ?`, [ShopManagerID]);
   var t = JSON.stringify(s[0].ShopID);
   const ShopID = JSON.parse(t);
 
@@ -260,7 +316,7 @@ function orderButton(data) {
   let error = 'Error in updating forSale product number.';
   if (res.length == 0) {
     const r = db.run(`INSERT INTO Have (StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num)
-            VALUES (@StoreHouseID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num)`,
+                      VALUES (@StoreHouseID, @ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Num)`,
       { StoreHouseID, ShopManagerID, ShopID, ProductSupplierID, ProductID, Num });
 
     if (r.changes) {
@@ -305,7 +361,7 @@ function pageTradeHistory(ManagerID, page = 1) {
 }
 
 // forSale
-function forSale(data) {
+function forSell(data) {
   const { ShopManagerID, ProductSupplierID, ProductID, Num } = data;
 
   const result = db.run(` UPDATE For_Sell
@@ -313,7 +369,25 @@ function forSale(data) {
                           WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
                           AND ProductID = @ProductID`, { Num, ShopManagerID, ProductSupplierID, ProductID });
 
-  let error = 'Error in updating forSale product number.';
+  let error = 'Error in updating ForSell product number.';
+  if (result.changes) {
+    error = '';
+  }
+
+  return { error };
+}
+
+// deleteForSell
+function deleteForSell(data) {
+  const { ShopManagerID, ProductSupplierID, ProductID } = data;
+
+  // return ShopManagerID;
+  const result = db.run(` DELETE
+                          FROM For_Sell
+                          WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID
+                                AND ProductID = @ProductID`, { ShopManagerID, ProductSupplierID, ProductID });
+
+  let error = 'Error in deleting ForSell product number.';
   if (result.changes) {
     error = '';
   }
@@ -322,7 +396,8 @@ function forSale(data) {
 }
 
 module.exports = {
-  getShopList, getType,
+  getShopList, getType, getHistoryNum,
   searchProduct, clickCart, add, history, addProductNumInCart, subtractProductNumInCart, buy,
-  orderButton, pageOrderHistory, pageTradeHistory, forSale
+  orderButton, pageOrderHistory, pageTradeHistory, forSell,
+  deleteForSell
 }
