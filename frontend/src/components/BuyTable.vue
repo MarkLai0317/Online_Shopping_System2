@@ -1,7 +1,27 @@
 <template>
 <div>
+    <td nowrap>select type: </td>
+    <el-select v-model="TypeValue" placeholder="Select Type" @change="selectType">
+      <el-option
+        v-for="item in TypeOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </el-option>
+    </el-select>
+
+    <td nowrap>select shop: </td>
+    <el-select v-model="ShopValue" placeholder="Select Type" @change="selectShop">
+      <el-option
+        v-for="item in ShopOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </el-option>
+    </el-select>
 
   <el-table :data="currentPage" style="width: 100%">
+    
     <el-table-column fixed prop="ProductName" label="Product" width="150" />
     <el-table-column prop="ShopName" label="Shop" width="150" />
     <el-table-column prop="RemainNumber" label="Remain" width="150"/>
@@ -34,11 +54,39 @@
 export default {
   data() {
     return {
+      page: 1,
       totalPage: 50,
       pageSize: 10,
       currentType: '',
       currentShopName: '', 
       currentPage: [],
+      TypeValue: '',
+      ShopValue: '',
+      // api
+      TypeOptions: [{
+          value: 'fruit',
+          label: 'fruit'
+        }, {
+          value: 'shoes',
+          label: 'shoes'
+        }, {
+          value: '',
+          label: 'all'
+        }
+      ],
+      ShopOptions: [{
+          value: 'shop91',
+          label: 'shop91'
+        }, {
+          value: 'shop92',
+          label: 'shop92'
+        }, {
+          value: '',
+          label: 'all'
+        },
+      ]
+
+      
     }
   },
   created(){
@@ -48,11 +96,12 @@ export default {
 
     getPage(val) {
 
+      this.page = val
       //get 寫法
       this.axios.get('http://127.0.0.1:9000/nn/searchProduct', {
         params: {
           //get 參數放這裡
-          ShopID: this.currentShopName,
+          ShopID: this.currentShopName, // ShopName ---
           Type: this.currentType,
           page: val
         }
@@ -79,6 +128,14 @@ export default {
       console.log(row)
     },
     ////////
+    selectType(val){
+      this.currentType = val
+      this.getPage(this.page)
+    },
+    selectShop(val){
+      this.currentShopName = val
+      this.getPage(this.page)
+    }
     
   },
   computed: {
