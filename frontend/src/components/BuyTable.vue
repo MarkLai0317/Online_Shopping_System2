@@ -113,6 +113,7 @@ export default {
         // 就可以做其他處理 像存到data 裡面
         console.log(resobj.data)
         console.log(val)
+      
       })
       .catch(error => {
         console.log(error);
