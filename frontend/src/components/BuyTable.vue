@@ -112,7 +112,6 @@ export default {
         this.currentPage = resobj.data
         // 就可以做其他處理 像存到data 裡面
         console.log(resobj.data)
-        console.log(this.productTable)
         console.log(val)
       })
       .catch(error => {
