@@ -1,12 +1,32 @@
 <template>
 <div>
+    <td nowrap>select type: </td>
+    <el-select v-model="TypeValue" placeholder="Select Type" @change="selectType">
+      <el-option
+        v-for="item in TypeOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </el-option>
+    </el-select>
+
+    <td nowrap>select shop: </td>
+    <el-select v-model="ShopValue" placeholder="Select Type" @change="selectShop">
+      <el-option
+        v-for="item in ShopOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </el-option>
+    </el-select>
 
   <el-table :data="currentPage" style="width: 100%">
-    <el-table-column fixed prop="product" label="Product" width="150" />
-    <el-table-column prop="shop" label="Shop" width="150" />
-    <el-table-column prop="remaining" label="Remaining" width="150"/>
-    <el-table-column prop="price" label="Price" width="150"/>
-    <el-table-column prop="type" label="Type" width="150"/>
+    
+    <el-table-column fixed prop="ProductName" label="Product" width="150" />
+    <el-table-column prop="ShopName" label="Shop" width="150" />
+    <el-table-column prop="RemainNumber" label="Remain" width="150"/>
+    <el-table-column prop="Price" label="Price" width="150"/>
+    <el-table-column prop="Type" label="Type" width="150"/>
     <!-- -->
     <el-table-column>
       <template #default="scope">
@@ -16,15 +36,17 @@
       </template>
     </el-table-column>
     <!-- -->
-    
+
   </el-table>
   <el-pagination
     background
     layout="prev, pager, next"
     :page-size="pageSize"
-    :total="this.productTable.length"
-    @current-change="setPage">
+    :total="totalPage"
+    @current-change="getPage">
   </el-pagination>
+  <!-- test button -->
+     
 </div>
 </template>
 
@@ -33,76 +55,103 @@ export default {
   data() {
     return {
       page: 1,
-      pageSize: 5,
-      productTable: [
-        {
-          product: 'apple',
-          shop: 'qwer',
-          remaining: '24',
-          type: 'fruit',
-          price: '20',
-        },
-        {
-          product: 'orange',
-          shop: 'asdf',
-          remaining: '44',
-          type: 'fruit',
-          price: '25',
-        },
-        {
-          product: 'banna',
-          shop: 'zxcv',
-          remaining: '251',
-          type: 'fruit',
-          price: '40',
-        },
-        {
-          product: 'dick',
-          shop: 'Shawn',
-          remaining: '642',
-          type: 'fruit',
-          price: '1999', 
-        },
-        {
-          product: 'orange',
-          shop: 'asdf',
-          remaining: '44',
-          type: 'fruit',
-          price: '25',
-        },
-        {
-          product: 'banna',
-          shop: 'zxcv',
-          remaining: '251',
-          type: 'fruit',
-          price: '40',
-        },
-        {
-          product: 'dick',
-          shop: 'Shawn',
-          remaining: '642',
-          type: 'fruit',
-          price: '1999'
-        },
+      totalPage: 50,
+      pageSize: 10,
+      currentType: '',
+      currentShopName: '', 
+      currentPage: [],
+      TypeValue: '',
+      ShopValue: '',
+      // api
+      TypeOptions: [{
+          value: 'fruit',
+          label: 'fruit'
+        }, {
+          value: 'shoes',
+          label: 'shoes'
+        }, {
+          value: '',
+          label: 'all'
+        }
       ],
+      ShopOptions: [{
+          value: 'shop91',
+          label: 'shop91'
+        }, {
+          value: 'shop92',
+          label: 'shop92'
+        }, {
+          value: '',
+          label: 'all'
+        },
+      ]
+
+      
     }
   },
+  created(){
+    this.getPage(1)
+  },
   methods: {
+
+    getPage(val) {
+
+      this.page = val
+      //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/searchProduct', {
+        params: {
+          //get 參數放這裡
+          ShopID: this.currentShopName, // ShopName ---
+          Type: this.currentType,
+          page: val
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先 變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.currentPage = resobj.data
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.data)
+        console.log(val)
+      
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+    },
     ///////////
     pressAdd(index,row) {
       console.log(index)
       console.log(row)
     },
     ////////
-    setPage(val){
-      console.log(val)
-      this.page = val
+    selectType(val){
+      this.currentType = val
+      this.getPage(this.page)
+    },
+    selectShop(val){
+      this.currentShopName = val
+      this.getPage(this.page)
     }
+    
   },
   computed: {
-    currentPage(){
-      return this.productTable.slice(this.pageSize*this.page-this.pageSize,this.pageSize*this.page)
+    /*
+    currentPage: function(){
+      let temp = {
+        Price: this.productTable.Price,
+        Product: this.productTable.ProductName,
+        Shop: this.productTable.ShopID,
+        RemainNumber: this.productTable.RemainNumber,
+        Type: this.productTable.Type
+      };
+      return temp
     }
+    */
+    
   }
 }
 </script>
