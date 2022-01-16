@@ -36,17 +36,9 @@ router.get('/OrderHistory', function(req, res, next) {
 });
 router.get('/Order', function(req, res, next) {
     try {
-    res.json(ni.Order(req.query.ManagerID,req.query.page));
+    res.json(ni.Order());
     } catch(err) {
     console.error(`Error while getting order `, err.message);
-    next(err);
-    }  
-});
-router.get('/Page', function(req, res, next) {
-    try {
-    res.json(ni.Page(req.query.ManagerID,req.query.page));
-    } catch(err) {
-    console.error(`Error while getting page `, err.message);
     next(err);
     }  
 });

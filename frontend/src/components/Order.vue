@@ -4,6 +4,8 @@
   <el-table :data="currentPage" style="width: 100%">
     <el-table-column fixed prop="product" label="Product" width="150" />
     <el-table-column prop="supplier" label="Supplier" width="150" />
+    <!-- -->
+    <el-table-column prop="have" label="Have" width="150"/>
     <!--
     <el-table-column>
       <template #default="scope">
@@ -54,36 +56,43 @@ export default {
         {
           product: 'apple',
           supplier: 'qwer',
+          have: 10,
           number: 5
         },
         {
           product: 'orange',
           supplier: 'asdf',
+          have: 10,
           number: 10
         },
         {
           product: 'banna',
           supplier: 'zxcv',
+          have: 10,
           number: 3
         },
         {
           product: 'dick',
           supplier: 'Shawn',
+          have: 10,
           number: 4
         },
         {
           product: 'orange',
           supplier: 'asdf',
+          have: 10,
           number: 11
         },
         {
           product: 'banna',
           supplier: 'zxcv',
+          have: 10,
           number: 89
         },
         {
           product: 'dick',
           supplier: 'Shawn',
+          have: 10,
           number: 1094
         },
       ],

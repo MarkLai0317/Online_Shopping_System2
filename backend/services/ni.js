@@ -60,25 +60,14 @@ function OrderHistory(ManagerID,page=1){
   return{data}
 }
 //manager order
-function Order(ManagerID,page=1){
-  const offset = (page - 1) * listPerPage;
-  const data= db.query(`select Product.Name
-                        from Order_History,Product
-                        where Order_History.ProductSupplierID=Product.SupplierID and Order_History.ProductID=Product.ProductID and ShopManagerID= ?
-                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
+function Order(){
+  const data= db.query(`select *
+                        from Product
+                        `,[])
   //const meta={page};
   return{data}
 }
-//manager page
-function Page(ManagerID,page){
-  const offset = (page - 1) * listPerPage;
-  const data= db.query(`select Product.Name
-                        from Order_History,Product
-                        where Order_History.ProductSupplierID=Product.SupplierID and Order_History.ProductID=Product.ProductID and ShopManagerID= ?
-                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
-  const meta={page};
-  return{data,meta}
-}
+
 //manager create account
 function CreateNewManager(data){
   
@@ -128,6 +117,5 @@ module.exports = {
   Shop,
   OrderHistory,
   Order,
-  Page,
   CreateNewManager
 }

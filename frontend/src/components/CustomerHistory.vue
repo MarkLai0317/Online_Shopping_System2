@@ -1,18 +1,18 @@
 <template>
   <div>
     <el-container>
-      <box>Order history</box>
+      <p>Order history</p>
       <p />
       <el-header>
-        <p />
+        <p/>
         <el-row :gutter="30" justify="start">
-          <el-col :span="7">
+          <el-col :span="2">
             <div class="grid-content">{{ orderdata.Date }}</div>
           </el-col>
-          <el-col :span="4" :offset="5">
+          <el-col :span="4" :offset="0">
             <div class="grid-content">ID:{{ orderdata.Oid }}</div>
           </el-col>
-          <el-col :span="3" :offset="2">
+          <el-col :span="3" :offset="0">
             <div class="grid-content">${{ orderdata.Price }}</div>
           </el-col>
         </el-row>
@@ -25,12 +25,11 @@
           <el-table-column prop="Price" label="Price" width="100" />
         </el-table>
       </el-main>
-      <p />
+      <p/>
     </el-container>
-     <el-button-group>
-        <el-button type="primary" @click="lastPage">Last Page</el-button>
-        <el-button type="primary" @click="nextPage">Next Page</el-button>
-      </el-button-group>
+    <el-button  @click="lastPage">Last Page</el-button>
+    <box class="pageBox">{{ this.page }}</box>
+    <el-button  @click="nextPage">Next Page</el-button>
   </div>
 </template>
 
@@ -38,11 +37,15 @@
 export default {
   data() {
     return {
+      CustomerID: this.firebase.auth().currentUser.email,
+      page: 1,
+
       orderdata: {
         Date: "2021-12-12",
         Oid: "12345678",
         Price: 6229,
       },
+
       tableData: [
         {
           Name: "Food",
@@ -74,80 +77,74 @@ export default {
         Oid: "1678asdt",
         Price: 6239,
       },
-      tableData1: [
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-      ],
     };
   },
   methods: {
-    lastPage(){
+    lastPage() {
+       if (this.page - 1 > 0) {
+        this.page -= 1;
+       }
       //last page
+      //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/history', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+          page: this.page,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.ProductID)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
       console.log("last page");
     },
-     nextPage(){
+    nextPage() {
+     if (this.page + 1 > 0) { // where can get the limit of page
+        this.page += 1;
+       }
       //next page
+      //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/history', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+          page: this.page,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.ProductID)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
       console.log("next page");
     },
-  }
+  
+  },
 };
 </script>
 
 <style>
-box {
-  font-size: 24px;
-  color: white;
+.pageBox {
   padding: 10px;
-  background-color: rgb(248, 106, 70);
-}
-.el-table {
-  --el-table-tr-bg-color: #f0f0f0;
-  width: 550px;
-  font-size: 14px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.el-container {
-  width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.el-header {
-  background-color: #3a89f1;
-  color: var(--el-text-color-primary);
-  text-align: left;
-  height: 50px;
-}
-.el-main {
-  background-color: #9bcdff;
-  color: var(--el-text-color-primary);
-  text-align: center;
-}
-.grid-content {
-  color: white;
-  font-size: 18px;
-  text-align: left;
-}
-.el-button {
-  margin-left: auto;
-  margin-right: auto;
-  align: center;
 }
 </style>

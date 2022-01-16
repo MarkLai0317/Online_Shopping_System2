@@ -50,12 +50,22 @@ router.post('/add', function (req, res, next) {
     }
 });
 
+// Customer: getHistoryNum
+router.get('/getHistoryNum', function (req, res, next) {
+    try {
+        res.json(nn.getHistoryNum(req.query.CustomerID));
+    } catch (err) {
+        console.error(`Error while getting historyNum `, err.message);
+        next(err);
+    }
+});
+
 // Customer: history
 router.get('/history', function (req, res, next) {
     try {
-        res.json(nn.history(req.query.CustomerID));
+        res.json(nn.history(req.query.CustomerID, req.query.page));
     } catch (err) {
-        console.error(`Error while getting product `, err.message);
+        console.error(`Error while getting tradeHistory `, err.message);
         next(err);
     }
 });
@@ -122,9 +132,19 @@ router.get('/pageTradeHistory', function (req, res, next) {
 });
 
 // Manager: forSale
-router.post('/forSale', function (req, res, next) {
+router.post('/forSell', function (req, res, next) {
     try {
-        res.json(nn.forSale(req.body));
+        res.json(nn.forSell(req.body));
+    } catch (err) {
+        console.error(`Error while adding product `, err.message);
+        next(err);
+    }
+});
+
+// Manager: deleteForSell
+router.post('/deleteForSell', function (req, res, next) {
+    try {
+        res.json(nn.deleteForSell(req.body));
     } catch (err) {
         console.error(`Error while adding product `, err.message);
         next(err);
