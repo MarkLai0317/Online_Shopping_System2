@@ -1,14 +1,14 @@
 const db = require('../services/db'); // dp 裡的function 用ㄌㄞquery 和 改資料的
 const listPerPage = 10;
 
-// customer show all shopName
+// customer show all shopName ------------------
 function getShopList() {
   const data = db.query(`SELECT distinct ShopID, Name as ShopName 
                          FROM Shop`, []);
   return { data };
 }
 
-// customre: getType
+// customre: getType  -------------------------
 function getType() {
   const data = db.query(`SELECT distinct  Type 
                          FROM For_Sell LEFT JOIN Product ON Product.ProductID = For_Sell.ProductID 
@@ -16,11 +16,64 @@ function getType() {
   return { data };
 }
 
-// customer search product
+// customer maxPage --------------------------
+function maxPage(ShopID, Type) {
+
+  //  have no shopid and type
+  if (!ShopID && !Type) {
+    const data = db.query(`SELECT  COUNT(Product.SupplierID AND Product.ProductID ) AS temp                       
+                          FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
+                          INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
+                                              AND Product.SupplierID = For_Sell.ProductSupplierID
+                          `, []);
+    var s = JSON.stringify(data[0].temp);
+    const page = Math.ceil(JSON.parse(s) / 10);
+    return { page };
+
+
+
+    // only have type
+  } else if (!ShopID) {
+    const data = db.query(`SELECT COUNT( Product.SupplierID AND Product.ProductID) AS temp                         
+                          FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
+                          INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
+                                              AND Product.SupplierID = For_Sell.ProductSupplierID
+                          WHERE Type = ?`, [Type]);
+    var s = JSON.stringify(data[0].temp);
+    const page = Math.ceil(JSON.parse(s) / 10);
+    return { page };
+
+
+    // only have shopID
+  } else if (!Type) {
+    const data = db.query(`SELECT  COUNT( Product.SupplierID AND Product.ProductID) AS temp                         
+                          FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
+                          INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
+                                              AND Product.SupplierID = For_Sell.ProductSupplierID
+                          WHERE Shop.ShopID = ?`, [ShopID]);
+    var s = JSON.stringify(data[0].temp);
+    const page = Math.ceil(JSON.parse(s) / 10);
+    return { page };
+
+  } else {
+    const data = db.query(`SELECT  COUNT( Product.SupplierID AND Product.ProductID) AS temp                         
+                          FROM Shop INNER JOIN For_Sell ON Shop.ShopID = For_Sell.ShopID 
+                          INNER JOIN Product ON Product.ProductID = For_Sell.ProductID 
+                                              AND Product.SupplierID = For_Sell.ProductSupplierID
+                          WHERE Type = ? AND Shop.ShopID = ?`, [Type, ShopID]);
+    var s = JSON.stringify(data[0].temp);
+    const page = Math.ceil(JSON.parse(s) / 10);
+    return { page };
+  }
+
+}
+
+
+// customer search product  ---------------------------
 function searchProduct(ShopID, Type, page = 1) {
   const offset = (page - 1) * listPerPage;
 
-  //  have shopid and type
+  //  have no shopid and type
   if (!ShopID && !Type) {
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
                           For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
@@ -77,7 +130,7 @@ function searchProduct(ShopID, Type, page = 1) {
   }
 }
 
-// customer click Cart
+// customer click Cart  -------------------------
 function clickCart(CustomerID) {
   const data = db.query(`SELECT Cart.CustomerID AS CustomerID, Cart.Num AS NumberInCart, For_Sell.Num AS RemainNumber
                           FROM Cart LEFT JOIN For_Sell ON For_Sell.ShopID = Cart.ShopID 
@@ -87,6 +140,7 @@ function clickCart(CustomerID) {
   return { data };
 }
 
+// add prouduct to cart ----------------------
 function add(addObj) {
   const { CustomerID, ShopID, ProductSupplierID, ProductID } = addObj;
   const mid = db.query(`SELECT ManagerID
@@ -125,19 +179,34 @@ function add(addObj) {
   return { error };
 }
 
+// delete cart  ------------------------------
+function deleteCart(deleteObj) {
+  const { CustomerID, ShopID, ProductSupplierID, ProductID } = deleteObj;
 
-// hisNumber
+  const result = db.run(` DELETE
+                          FROM Cart
+                          WHERE CustomerID = @CustomerID AND ShopID = @ShopID AND ProductSupplierID = @ProductSupplierID AND ProductID = @ProductID`,
+    { CustomerID, ShopID, ProductSupplierID, ProductID });
+
+  let error = 'Error in deleting product in cart.'
+  if (result.changes) {
+    error = '';
+  }
+  return { error };
+}
+
+// hisNumber -------------------------------
 function getHistoryNum(CustomerID) {
   var numHid = db.query(` SELECT  COUNT(DISTINCT HistoryID) AS temp
-                      FROM  Trade_History 
-                      WHERE CustomerID = ?` , [CustomerID]);
+                          FROM  Trade_History 
+                          WHERE CustomerID = ?` , [CustomerID]);
   var s = JSON.stringify(numHid[0].temp);
   numHid = JSON.parse(s);
 
   return numHid;
 }
 
-// history ( page : 1 ~ x )
+// history ( page : 1 ~ x ) ---------------------
 function history(CustomerID, page) {
   // count HistoryID index
   const index = page - 1;
@@ -153,9 +222,9 @@ function history(CustomerID, page) {
   const hid = res[index].HistoryID;
 
   // count totalPrice & get Time
-  var tp_time = db.query(` SELECT  SUM(Num * Price) AS tp, Time
-                              FROM  Trade_History 
-                              WHERE CustomerID = ? AND HistoryID = ?` , [CustomerID, hid]);
+  var tp_time = db.query(`SELECT  SUM(Num * Price) AS tp, Time
+                          FROM  Trade_History 
+                          WHERE CustomerID = ? AND HistoryID = ?` , [CustomerID, hid]);
   var s = JSON.stringify(tp_time[0].tp);
   var totalPrice = JSON.parse(s);
   s = JSON.stringify(tp_time[0].Time);
@@ -182,7 +251,7 @@ function history(CustomerID, page) {
   return { data };
 }
 
-// +(cart)
+// +(cart) -------------------------------------------
 function addProductNumInCart(data) {
   const { CustomerID, ShopID, ProductSupplierID, ProductID } = data;
 
@@ -199,7 +268,7 @@ function addProductNumInCart(data) {
   return { error };
 }
 
-// -(cart)
+// -(cart) -----------------------------------------
 function subtractProductNumInCart(data) {
   const { CustomerID, ShopID, ProductSupplierID, ProductID } = data;
 
@@ -216,7 +285,7 @@ function subtractProductNumInCart(data) {
   return { error };
 }
 
-// buy
+// buy -----------------------------------------
 function buy(data) {
   const { CustomerID } = data;
   let error = 'You have nothing in your cart.';
@@ -231,7 +300,7 @@ function buy(data) {
 
   // find max hid
   var h = db.query(`SELECT MAX(HistoryID) as hh
-  FROM Trade_History `, []);
+                    FROM Trade_History `, []);
   var s = JSON.stringify(h[0].hh);
   var hid = JSON.parse(s);
   hid = hid + 1;
@@ -276,13 +345,8 @@ function buy(data) {
   return { error };
 
 }
-// data = []
-// data.push({
-//   HID: hid,
-//   receipt: []
-// })
 
-// -------------------------------------------------------------------------------------
+// ---------------------------------------- Manager Part -----------------------------------------------------
 // orderButton
 function orderButton(data) {
   const { StoreHouseID, ShopManagerID, ProductSupplierID, ProductID, Num } = data;
@@ -338,7 +402,7 @@ function orderButton(data) {
   return { error };
 }
 
-// pageOrderHistory
+// pageOrderHistory ---------------------------------
 function pageOrderHistory(ManagerID, page = 1) {
   const offset = (page - 1) * listPerPage;
   const data = db.query(` SELECT Time, OrderHistoryID, Product.Name AS ProductName, Supplier.Name AS SupplierName, Num
@@ -349,7 +413,7 @@ function pageOrderHistory(ManagerID, page = 1) {
   return { data };
 }
 
-// pageTradeHistory
+// pageTradeHistory ---------------------------------
 function pageTradeHistory(ManagerID, page = 1) {
   const offset = (page - 1) * listPerPage;
   const data = db.query(` SELECT Time, HistoryID, Product.Name AS ProductName, Price, Num
@@ -360,7 +424,7 @@ function pageTradeHistory(ManagerID, page = 1) {
   return { data }
 }
 
-// forSale
+// forSale -------------------------------------
 function forSell(data) {
   const { ShopManagerID, ProductSupplierID, ProductID, Num } = data;
 
@@ -377,7 +441,7 @@ function forSell(data) {
   return { error };
 }
 
-// deleteForSell
+// deleteForSell -------------------------------
 function deleteForSell(data) {
   const { ShopManagerID, ProductSupplierID, ProductID } = data;
 
@@ -396,7 +460,7 @@ function deleteForSell(data) {
 }
 
 module.exports = {
-  getShopList, getType, getHistoryNum,
+  getShopList, getType, getHistoryNum, maxPage, deleteCart,
   searchProduct, clickCart, add, history, addProductNumInCart, subtractProductNumInCart, buy,
   orderButton, pageOrderHistory, pageTradeHistory, forSell,
   deleteForSell
