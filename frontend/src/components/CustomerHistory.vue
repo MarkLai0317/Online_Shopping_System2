@@ -4,7 +4,7 @@
       <p>Order history</p>
       <p />
       <el-header>
-        <p />
+        <p/>
         <el-row :gutter="30" justify="start">
           <el-col :span="2">
             <div class="grid-content">{{ orderdata.Date }}</div>
@@ -25,7 +25,7 @@
           <el-table-column prop="Price" label="Price" width="100" />
         </el-table>
       </el-main>
-      <p />
+      <p/>
     </el-container>
     <el-button  @click="lastPage">Last Page</el-button>
     <box class="pageBox">{{ this.page }}</box>
@@ -37,6 +37,7 @@
 export default {
   data() {
     return {
+      CustomerID: this.firebase.auth().currentUser.email,
       page: 1,
 
       orderdata: {
@@ -84,13 +85,60 @@ export default {
         this.page -= 1;
        }
       //last page
+      //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/history', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+          page: this.page,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.ProductID)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
       console.log("last page");
     },
     nextPage() {
-      this.page += 1;
+     if (this.page + 1 > 0) { // where can get the limit of page
+        this.page += 1;
+       }
       //next page
+      //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/history', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+          page: this.page,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.ProductID)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
       console.log("next page");
     },
+  
   },
 };
 </script>
