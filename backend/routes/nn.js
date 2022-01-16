@@ -20,6 +20,17 @@ router.get('/getType', function (req, res, next) {
         next(err);
     }
 });
+
+//  customer maxPage
+router.get('/maxPage', function (req, res, next) {
+    try {
+        res.json(nn.maxPage(req.query.ShopID, req.query.Type));
+    } catch (err) {
+        console.error(`Error while getting product `, err.message);
+        next(err);
+    }
+});
+
 //   Customer: search product
 router.get('/searchProduct', function (req, res, next) {
     try {
@@ -44,6 +55,16 @@ router.get('/clickCart', function (req, res, next) {
 router.post('/add', function (req, res, next) {
     try {
         res.json(nn.add(req.body));
+    } catch (err) {
+        console.error(`Error while adding product `, err.message);
+        next(err);
+    }
+});
+
+// Customer: delete product in Cart
+router.post('/deleteCart', function (req, res, next) {
+    try {
+        res.json(nn.deleteCart(req.body));
     } catch (err) {
         console.error(`Error while adding product `, err.message);
         next(err);
