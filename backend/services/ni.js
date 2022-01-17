@@ -14,19 +14,22 @@ function Revenue(ManagerID){
 function TradeHistory(ManagerID,page=1){
   const offset = (page - 1) * listPerPage;
   let data=[];
-  const hid= db.query(`select Trade_History.Time,Trade_History.HistoryID,Product.Name,Trade_History.Price,Trade_History.Num
-                        from Trade_History,
-                        Product where Trade_History.ShopManagerID= ? and 
+  const hid= db.query(`select Trade_History.HistoryID
+                        ,Trade_History.Price,Trade_History.CustomerID
+                        from Trade_History,Product
+                        where Trade_History.ShopManagerID= ? and 
                         Trade_History.ProductSupplierID=Product.SupplierID and 
                         Trade_History.ProductID=Product.ProductID
                         GROUP BY Trade_History.HistoryID`,[ManagerID])
   for(i=0;i<hid.length;i++){
     data.push({HistoryID:hid[i].HistoryID,
+               TotalPrice:hid[i].Price,
+               CustomerID:hid[i].CustomerID,
                Receipt:[]
               })
     var HID=JSON.stringify(hid[i].HistoryID);
     //Integer.parseInt(jsonObj.get("data[i].HistoryID"));
-    let product= db.query(`select Trade_History.Time,Product.Name,Trade_History.Price,Trade_History.Num
+    let product= db.query(`select Trade_History.Time,Product.Name as ProductName,Trade_History.Num
                              from Trade_History,
                              Product where Trade_History.ShopManagerID= ? and 
                              Trade_History.ProductSupplierID=Product.SupplierID and 
@@ -43,7 +46,8 @@ function TradeHistory(ManagerID,page=1){
 }
 //manager shop
 function Shop(ManagerID){
-  const data=db.query(`select Product.Name,Product.SupplierID,For_Sell.Num,For_Sell.Price from Product,
+  const data=db.query(`select Product.Name as ProductName,Product.SupplierID,For_Sell.Num
+                       ,For_Sell.Price from Product,
                        For_Sell where For_Sell.ProductSupplierID=Product.SupplierID and 
                        For_Sell.ProductID=Product.ProductID and For_Sell.ShopManagerID= ?`,[ManagerID])
   return{data};
@@ -51,7 +55,8 @@ function Shop(ManagerID){
 // manager OrderHistory
 function OrderHistory(ManagerID,page=1){
   const offset = (page - 1) * listPerPage;
-  const data= db.query(`select OrderHistoryID,Order_History.Time,Product.Name,Order_History.Num,Supplier.Name
+  const data= db.query(`select OrderHistoryID,Order_History.Time,Product.Name as ProductName
+                        ,Order_History.Num,Supplier.Name as SupplierName
                         from Order_History,Product,Supplier
                         where Order_History.ProductSupplierID=Product.SupplierID and 
                         Order_History.ProductID=Product.ProductID and Product.SupplierID=Supplier.SupplierID and ShopManagerID= ?

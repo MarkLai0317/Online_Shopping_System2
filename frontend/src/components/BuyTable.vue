@@ -42,7 +42,7 @@
     background
     layout="prev, pager, next"
     :page-size="pageSize"
-    :total="totalPage"
+    :total=maxPage
     @current-change="getPage">
   </el-pagination>
   <!-- test button -->
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       page: 1,
-      totalPage: 50,
+      maxPage: 50,
       pageSize: 10,
       currentType: '',
       currentShopName: '', 
@@ -75,10 +75,10 @@ export default {
         }
       ],
       ShopOptions: [{
-          value: 'shop91',
+          value: 91,
           label: 'shop91'
         }, {
-          value: 'shop92',
+          value: 90,
           label: 'shop92'
         }, {
           value: '',
@@ -90,10 +90,11 @@ export default {
     }
   },
   created(){
-    this.getPage(1)
+    this.getPage(1),
+    this.getMaxPage()
   },
   methods: {
-
+    // get the current page
     getPage(val) {
 
       this.page = val
@@ -122,12 +123,12 @@ export default {
         // always executed
       })
     },
-    ///////////
+    //////
     pressAdd(index,row) {
       console.log(index)
       console.log(row)
     },
-    ////////
+    ////
     selectType(val){
       this.currentType = val
       this.getPage(this.page)
@@ -135,22 +136,34 @@ export default {
     selectShop(val){
       this.currentShopName = val
       this.getPage(this.page)
+    },
+    // get the total number of pages 
+    getMaxPage(){
+      this.axios.get('http://127.0.0.1:9000/nn/maxPage', {
+        params: {
+          //get 參數
+          ShopID: this.currentShopName, 
+          Type: this.currentType,
+        }
+      })
+      .then(response=> {
+        let res = JSON.stringify(response.data); 
+        let resobj = JSON.parse(res)
+        console.log(resobj)
+        this.maxPage = (resobj.page*10)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+
     }
+    
     
   },
   computed: {
-    /*
-    currentPage: function(){
-      let temp = {
-        Price: this.productTable.Price,
-        Product: this.productTable.ProductName,
-        Shop: this.productTable.ShopID,
-        RemainNumber: this.productTable.RemainNumber,
-        Type: this.productTable.Type
-      };
-      return temp
-    }
-    */
     
   }
 }

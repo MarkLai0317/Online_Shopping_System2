@@ -31,15 +31,15 @@ export default {
   },
   data() {
     return {
-      tableData: {
-      },
+      tableData: [{
+      }],
     }
   },
   methods:{
     getSensorData() {
 
       //get 寫法
-      this.axios.get('http://127.0.0.1:9000/ni/TradeHistory', {
+        this.axios.get('http://127.0.0.1:9000/ni/TradeHistory', {
         params: {
           //get 參數放這裡
           ManagerID: '108703060@nccu.edu.tw',
