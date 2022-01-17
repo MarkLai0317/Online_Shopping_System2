@@ -7,28 +7,28 @@
         <p/>
         <el-row :gutter="30" justify="start">
           <el-col :span="2">
-            <div class="grid-content">{{ orderdata.Date }}</div>
+            <div class="grid-content">{{ order.Date }}</div>
           </el-col>
           <el-col :span="4" :offset="0">
-            <div class="grid-content">ID:{{ orderdata.Oid }}</div>
+            <div class="grid-content">ID:{{ order.Oid }}</div>
           </el-col>
           <el-col :span="3" :offset="0">
-            <div class="grid-content">${{ orderdata.Price }}</div>
+            <div class="grid-content">${{ order.Price }}</div>
           </el-col>
         </el-row>
       </el-header>
       <el-main>
-        <el-table :data="tableData">
-          <el-table-column prop="Name" label="Name" width="220" />
-          <el-table-column prop="Shop" label="Shop" width="150" />
-          <el-table-column prop="Number" label="Number" width="80" />
+        <el-table :data="table">
+          <el-table-column prop="ProductName" label="Name" width="220" />
+          <el-table-column prop="ShopName" label="Shop" width="150" />
+          <el-table-column prop="Num" label="Number" width="80" />
           <el-table-column prop="Price" label="Price" width="100" />
         </el-table>
       </el-main>
       <p/>
     </el-container>
     <el-button  @click="lastPage">Last Page</el-button>
-    <box class="pageBox">{{ this.page }}</box>
+    <el-box>{{ this.page }}</el-box>
     <el-button  @click="nextPage">Next Page</el-button>
   </div>
 </template>
@@ -39,12 +39,13 @@ export default {
     return {
       CustomerID: this.firebase.auth().currentUser.email,
       page: 1,
-
-      orderdata: {
-        Date: "2021-12-12",
-        Oid: "12345678",
-        Price: 6229,
+      order:{
+        Date: 'haha',
+        Oid: '123123',
+        Price: 1111,
       },
+      table:[
+      ],
 
       tableData: [
         {
@@ -98,7 +99,13 @@ export default {
         let resobj = JSON.parse(res) // 再變 object
         this.table = resobj
         // 就可以做其他處理 像存到data 裡面
-        console.log(resobj.ProductID)
+        // Date and Oid
+        this.order.Date = resobj.data[0].Time.split(' ')[0];
+        this.order.Oid = resobj.data[0].HistoryID;
+        this.order.Price = resobj.data[0].TotalPrice;
+        // table data
+        this.table = resobj.data[0].PurchaseHistory;
+
       })
       .catch(error => {
         console.log(error);
@@ -127,7 +134,12 @@ export default {
         let resobj = JSON.parse(res) // 再變 object
         this.table = resobj
         // 就可以做其他處理 像存到data 裡面
-        console.log(resobj.ProductID)
+        // Date and Oid
+        this.order.Date = resobj.data[0].Time.split(' ')[0];
+        this.order.Oid = resobj.data[0].HistoryID;
+        this.order.Price = resobj.data[0].TotalPrice;
+        // table data
+        this.table = resobj.data[0].PurchaseHistory;
       })
       .catch(error => {
         console.log(error);
@@ -139,6 +151,37 @@ export default {
       console.log("next page");
     },
   
+  },
+  created(){
+    this.page=1;
+    //get 寫法
+      this.axios.get('http://127.0.0.1:9000/nn/history', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+          page: this.page,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        // Date and Oid
+        this.order.Date = resobj.data[0].Time.split(' ')[0];
+        this.order.Oid = resobj.data[0].HistoryID;
+        this.order.Price = resobj.data[0].TotalPrice;
+        // table data
+        this.table = resobj.data[0].PurchaseHistory;
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
+      console.log("created")
   },
 };
 </script>
