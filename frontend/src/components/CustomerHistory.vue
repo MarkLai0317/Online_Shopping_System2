@@ -47,37 +47,6 @@ export default {
       table:[
       ],
 
-      tableData: [
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-        {
-          Name: "Food",
-          Shop: "7-11",
-          Number: 2,
-          Price: 12,
-        },
-      ],
-      orderdata1: {
-        Date: "2022-01-01",
-        Oid: "1678asdt",
-        Price: 6239,
-      },
     };
   },
   methods: {
