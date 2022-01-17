@@ -50,6 +50,13 @@ router.post('/register/Manager', function(req, res, next) {
     next(err);
   }
 });
-
+router.get('/GetStoreHouseID', function(req, res, next) {
+  try {
+  res.json(ni.GetStoreHouseID(req.query.ManagerID));
+  } catch(err) {
+  console.error(`Error while getting StoreHouseID `, err.message);
+  next(err);
+  }  
+});
 
 module.exports = router;
