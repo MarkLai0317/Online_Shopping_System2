@@ -16,6 +16,7 @@ export default {
   },
   created(){
     this.getSensorData()
+    this.getTradeHistory()
     
   },
   data(){
@@ -125,6 +126,28 @@ export default {
         this.error = 'register fail'
         console.log(this.page)
       });
+    },
+    getTradeHistory(){
+      this.axios.get('http://127.0.0.1:9000/ni/TradeHistory', {
+        params: {
+          //get 參數放這裡
+          ManagerID: '108703060@nccu.edu.tw' ,
+          page: 1,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res) // 再變 object
+        this.table = resobj
+        // 就可以做其他處理 像存到data 裡面
+        console.log(resobj.data)
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
     }
     
   }
