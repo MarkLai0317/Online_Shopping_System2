@@ -47,9 +47,37 @@ export default defineComponent({
   },
   data() {
     return {
-      input:new Array,
+      input:[
+        /*
+        {
+        year:2019,
+        month:1,
+        price:20,
+        },
+        {
+        year:2017,
+        month:1,
+        price:20,
+        },
+        {
+        year:2022,
+        month:1,
+        price:20,
+        },
+        {
+        year:2017,
+        month:1,
+        price:30,
+        },
+        {
+        year:2018,
+        month:1,
+        price:20,
+        }
+        */
+      ],
       series:[{
-        name:"series-1",
+        name:0,
         data:[0,0,0,0,0,0,0,0,0,0,0,0],
       }],
       chartOptions: {
@@ -115,28 +143,23 @@ export default defineComponent({
         for(let i in this.input){
           //    初始化
           if(i==0){
-            this.series[0].name=this.input[0].year.toString()
-            for(let j=0;j<12;++j){
-              this.series[0].data[j]=0
-            }
+            this.series=this.series.splice(0,0)
+            this.series.push({name:this.input[i].year,data:[0,0,0,0,0,0,0,0,0,0,0,0]})
           }
           else if(this.input[i].year!=this.input[i-1].year){
             this.series.push({name:this.input[i].year,data:[0,0,0,0,0,0,0,0,0,0,0,0]})
           }
-          //    更新資料
+          //    更新資料(當前的最後)
           this.series[this.series.length-1].data[this.input[i].month-1]+=this.input[i].price
         }
       }
       else{
         //    初始化
-        this.series=this.series.splice(0,1)
-        this.series[0].name=this.input[0].year.toString()
-        for(let i=0;i<12;++i){
-          this.series[0].data[i]=0;
-        }
+        this.series=this.series.splice(0,0)
+        this.series.push({name:val,data:[0,0,0,0,0,0,0,0,0,0,0,0]})
         //    更新資料
         for(let i in this.input){
-          if(this.input[i].year==val){
+          if(this.input[i].year==val){//    年相等
             this.series[0].data[this.input[i].month-1]+=this.input[i].price
           }
         }
@@ -144,12 +167,12 @@ export default defineComponent({
     },
 
     getSensorData() {
-
+      var email=this.firebase.auth().currentUser.email
       //get 寫法
       this.axios.get('http://127.0.0.1:9000/ni/Revenue', {
         params: {
           //get 參數放這裡
-          ManagerID:'108703060@nccu.edu.tw',
+          ManagerID:email,
         }
       })
       .then(response=> {//  get 回來的 資料 處理
@@ -168,7 +191,7 @@ export default defineComponent({
           return a.year<b.year
         })
         this.trans_to_options()
-
+        console.log(this.input)
         //    end
       })
       .catch(error => {
