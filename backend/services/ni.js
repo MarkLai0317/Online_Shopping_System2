@@ -116,11 +116,19 @@ function CreateNewManager(data){
   }
   return {error};
 }
+function GetStoreHouseID(ManagerID){
+  const data = db.query(`SELECT  distinct(StoreHouseID) AS StoreHouseID
+                         from Have
+                         where ShopManagerID= ?
+                         `,[ManagerID])
+  return {data};
+}
 module.exports = {
   Revenue,
   TradeHistory,
   Shop,
   OrderHistory,
   Order,
-  CreateNewManager
+  CreateNewManager,
+  GetStoreHouseID
 }
