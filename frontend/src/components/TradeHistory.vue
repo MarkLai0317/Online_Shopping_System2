@@ -9,7 +9,7 @@
             <th style="width:33.33%">Price</th>
           </tr>
           <tr v-for="item in props.row.Receipt" :key="item.id" align="center">
-            <td>{{item.Name}}</td>
+            <td>{{item.ProductName}}</td>
             <td>{{item.Num}}</td>
             <td>{{item.Price}}</td>
           </tr>
@@ -18,8 +18,8 @@
     </el-table-column>
     <el-table-column label="Date" prop="Receipt[0].Time" align="center"/>
     <el-table-column label="HID" prop="HistoryID" align="center"/>
-    <el-table-column label="Customer" prop="customer" align="center"/>
-    <el-table-column label="Total Price" prop="total_price" align="center"/>
+    <el-table-column label="Customer" prop="CustomerID" align="center"/>
+    <el-table-column label="Total Price" prop="TotalPrice" align="center"/>
   </el-table>
 </template>
 
@@ -42,7 +42,7 @@ export default {
         this.axios.get('http://127.0.0.1:9000/ni/TradeHistory', {
         params: {
           //get 參數放這裡
-          ManagerID: '108703060@nccu.edu.tw',
+          ManagerID: this.firebase.auth().currentUser.email,
           page: 1
         }
       })
