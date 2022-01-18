@@ -138,12 +138,12 @@ export default {
     changePrice(index,row) {
       console.log(index)
       console.log(row)
-      /*
-      this.axios.post('http://127.0.0.1:9000/ni/changePrice', {
+      
+      this.axios.post('http://127.0.0.1:9000/ni/PriceChange', {
         // post 參數放這裡
-        CustomerID: this.firebase.auth().currentUser.email,
-        ShopID: row.ShopID,
-        ProductSupplierID: row.SupplierID,
+        ManagerID: this.firebase.auth().currentUser.email,
+        Price: row.price,
+        SupplierID: row.SupplierID,
         ProductID: row.ProductID
       })
       .then(response => {// 回傳的 response 處理
@@ -155,10 +155,11 @@ export default {
         }
         else{
           console.log('change price succeed!')
+          this.getForSaleTable()
         }
 
       })
-      */
+      
       this.getForSaleTable()
     },
     ////////
@@ -166,7 +167,7 @@ export default {
     handleAdd(index, row) {
       console.log(index, row);
       
-      this.axios.post('http://127.0.0.1:9000/nn/ForSell', {
+      this.axios.post('http://127.0.0.1:9000/nn/forSell', {
         // post 參數放這裡
         StoreHouseID: row.StoreHouseID,
         ShopManagerID: this.firebase.auth().currentUser.email,
@@ -185,12 +186,12 @@ export default {
         }
         else{
           console.log('add to ForSale succeed!')
+          this.getForSaleTable()
+          this.getHaveTable()
         }
-
       })
       
-      this.getForSaleTable()
-      this.getHaveTable()
+      
     },
     setPage(val){
       console.log(val)
