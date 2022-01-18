@@ -126,7 +126,7 @@ function GetStoreHouseID(ManagerID){
 }
 function GetHave(ManagerID){
   const data = db.query(`SELECT Have.ProductID,Have.ProductSupplierID as SupplierID,Product.Name as ProductName
-                         ,Have.Num
+                         ,Have.Num,Have.StoreHouseID
                          from Have,Product
                          where Have.ShopManagerID= ? and Have.ProductSupplierID=Product.SupplierID
                          and Have.ProductID=Product.ProductID`,[ManagerID])
