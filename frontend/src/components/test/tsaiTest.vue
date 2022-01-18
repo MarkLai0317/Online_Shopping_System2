@@ -2,32 +2,17 @@
 <div>
   <h2>ForSale</h2>
   <el-table 
-  :data="currentHave" 
+  :data="productTable" 
   style="width: 100%"
   >
     <el-table-column prop="product" label="Product" width="150" />
     <el-table-column prop="supplier" label="Supplier" width="150" />
     <el-table-column prop="number" label="Number" width="150"/>
     <el-table-column prop="price" label="Price" width="150"/>
-      
-    <el-table-column>
-      <template #default="scope">
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
-      </template>
-    </el-table-column> 
 
   </el-table>
 
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :total="this.productTable.length"
-    @current-change="setPage">
-  </el-pagination>
+  
 
 
   <!-- Have table -->
@@ -35,7 +20,7 @@
 
   <h2>Products</h2>
   <el-table 
-  :data="currentHave" 
+  :data="productTable" 
   style="width: 100%"
   >
     <el-table-column prop="product" label="Product" width="150" />
@@ -74,14 +59,6 @@
     </el-table-column> 
     
   </el-table>
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :total="this.productTable.length"
-    @current-change="setPage">
-  </el-pagination>
-
 
 </div>
 </template>
@@ -168,21 +145,13 @@ export default {
       console.log(row)
     },
     ////////
-    setPage(val){
-      console.log(val)
-      this.page = val
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
+    
     handleAdd(index, row) {
       console.log(index, row);
     }
   },
   computed: {
-    currentHave(){
-      return this.productTable.slice(this.pageSize*this.page-this.pageSize,this.pageSize*this.page)
-    }
+    
   }
 }
 </script>
