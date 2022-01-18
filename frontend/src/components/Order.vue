@@ -4,7 +4,6 @@
       v-model="currentHouse"
       placeholder="Select Store House"
       @change="selectHouse"
-      size="mini"
     >
       <el-option
         v-for="item in StoreHouses"
@@ -14,7 +13,7 @@
       >
       </el-option>
     </el-select>
-    <p/>
+    <p />
     <el-table :data="currentPage" style="width: 100%">
       <el-table-column fixed prop="Name" label="Product" width="150" />
       <el-table-column prop="SupplierID" label="Supplier" width="150" />
@@ -113,26 +112,37 @@ export default {
       //------------------------
       let ShopManagerID = this.ManagerID;
       let StoreHouseID = this.currentHouse;
-      let SupplierID = row.SupplierID;
+      let ProductSupplierID = row.SupplierID;
       let ProductID = row.ProductID;
       let Num = row.number;
 
-      let add = [StoreHouseID, ShopManagerID, SupplierID, ProductID, Num];
-      console.log(add);
-      
+      let data = {
+        StoreHouseID: StoreHouseID,
+        ShopManagerID: ShopManagerID,
+        ProductSupplierID: ProductSupplierID,
+        ProductID: ProductID,
+        Num: Num,
+      };
+      console.log("ADD", data);
+
       //post 寫法
-      this.axios.post('http://127.0.0.1:9000/nn/orderButton', {
-        // post 參數放這裡
-        data : this.add
-      })
-      .catch(error => {
-        console.log(error)
-        this.error = 'errorl'
-        console.log('order error')
-      })
-      .then(function() {
-        row.Num=0;
-      });
+      this.axios
+        .post("http://127.0.0.1:9000/nn/orderButton", {
+          // post 參數放這裡
+          StoreHouseID: StoreHouseID,
+          ShopManagerID: ShopManagerID,
+          ProductSupplierID: ProductSupplierID,
+          ProductID: ProductID,
+          Num: Num,
+        })
+        .catch((error) => {
+          console.log(error);
+          this.error = "errorl";
+          console.log("order error");
+        })
+        .then(function () {
+          row.number = 0;
+        });
       //------------------------
     },
     ////////
