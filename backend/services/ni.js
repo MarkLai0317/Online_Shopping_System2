@@ -16,7 +16,7 @@ function TradeHistory(ManagerID,page=1){
   let data=[];
   const hid= db.query(`select Trade_History.HistoryID
                         ,Trade_History.Price,Trade_History.CustomerID
-                        from Trade_History,
+                        from Trade_History,Product
                         where Trade_History.ShopManagerID= ? and 
                         Trade_History.ProductSupplierID=Product.SupplierID and 
                         Trade_History.ProductID=Product.ProductID
@@ -116,11 +116,19 @@ function CreateNewManager(data){
   }
   return {error};
 }
+function GetStoreHouseID(ManagerID){
+  const data = db.query(`SELECT  distinct(StoreHouseID) AS StoreHouseID
+                         from Have
+                         where ShopManagerID= ?
+                         `,[ManagerID])
+  return {data};
+}
 module.exports = {
   Revenue,
   TradeHistory,
   Shop,
   OrderHistory,
   Order,
-  CreateNewManager
+  CreateNewManager,
+  GetStoreHouseID
 }
