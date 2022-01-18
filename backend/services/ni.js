@@ -15,7 +15,7 @@ function TradeHistory(ManagerID,page=1){
   const offset = (page - 1) * listPerPage;
   let data=[];
   const hid= db.query(`select Trade_History.HistoryID
-                        ,Trade_History.Price,Trade_History.CustomerID
+                        ,Trade_History.Price,Trade_History.CustomerID,Trade_History.Num
                         from Trade_History,Product
                         where Trade_History.ShopManagerID= ? and 
                         Trade_History.ProductSupplierID=Product.SupplierID and 
@@ -23,13 +23,14 @@ function TradeHistory(ManagerID,page=1){
                         GROUP BY Trade_History.HistoryID`,[ManagerID])
   for(i=0;i<hid.length;i++){
     data.push({HistoryID:hid[i].HistoryID,
-               TotalPrice:hid[i].Price,
+               TotalPrice:hid[i].Price*hid[i].Num,
                CustomerID:hid[i].CustomerID,
                Receipt:[]
               })
     var HID=JSON.stringify(hid[i].HistoryID);
     //Integer.parseInt(jsonObj.get("data[i].HistoryID"));
     let product= db.query(`select Trade_History.Time,Product.Name as ProductName,Trade_History.Num
+                            ,Price
                              from Trade_History,
                              Product where Trade_History.ShopManagerID= ? and 
                              Trade_History.ProductSupplierID=Product.SupplierID and 
@@ -123,6 +124,23 @@ function GetStoreHouseID(ManagerID){
                          `,[ManagerID])
   return {data};
 }
+function GetHave(ManagerID){
+  const data = db.query(`SELECT Have.ProductID,Have.ProductSupplierID as SupplierID,Product.Name as ProductName
+                         ,Have.Num
+                         from Have,Product
+                         where Have.ShopManagerID= ? and Have.ProductSupplierID=Product.SupplierID
+                         and Have.ProductID=Product.ProductID`,[ManagerID])
+  return {data};
+}
+function GetForSale(ManagerID){
+  const data = db.query(`SELECT For_Sell.ProductID,For_Sell.ProductSupplierID as SupplierID
+                         ,Product.Name as ProductName,For_Sell.Price,For_Sell.Num
+                         from For_Sell,Product
+                         where For_Sell.ShopManagerID= ? and For_Sell.ProductSupplierID=Product.SupplierID
+                         and For_Sell.ProductID=Product.ProductID`,[ManagerID])
+  return {data};
+}
+
 module.exports = {
   Revenue,
   TradeHistory,
@@ -130,5 +148,7 @@ module.exports = {
   OrderHistory,
   Order,
   CreateNewManager,
-  GetStoreHouseID
+  GetStoreHouseID,
+  GetHave,
+  GetForSale
 }
