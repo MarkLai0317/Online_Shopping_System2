@@ -1,5 +1,20 @@
 <template>
   <div>
+    <el-select
+      v-model="currentHouse"
+      placeholder="Select Store House"
+      @change="selectHouse"
+      size="mini"
+    >
+      <el-option
+        v-for="item in StoreHouses"
+        :key="item.StoreHouseID"
+        :label="item.StoreHouseID"
+        :value="item.StoreHouseID"
+      >
+      </el-option>
+    </el-select>
+    <p/>
     <el-table :data="currentPage" style="width: 100%">
       <el-table-column fixed prop="Name" label="Product" width="150" />
       <el-table-column prop="SupplierID" label="Supplier" width="150" />
@@ -15,7 +30,7 @@
       </template>
     </el-table-column> 
     -->
-      <el-table-column label="Number">
+      <el-table-column label="Number" width="160">
         <template #default="scope">
           <el-input-number
             v-model="scope.row.number"
@@ -25,27 +40,12 @@
         </template>
       </el-table-column>
       <!-- -->
-      <el-table-column>
+      <el-table-column label="Order" width="80">
         <template #default="scope">
           <el-button size="mini" @click="pressOrder(scope.$index, scope.row)"
             >Order</el-button
           >
         </template>
-      </el-table-column>
-      <el-table-column>
-        <el-select
-          v-model="StoreHouses"
-          placeholder="Select Type"
-          @change="selectHouse"
-        >
-          <el-option
-            v-for="item in StoreHouses"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
       </el-table-column>
       <!-- -->
     </el-table>
@@ -68,7 +68,9 @@ export default {
       page: 1,
       pageSize: 5,
       productTable: [],
-      StoreHouses:[],
+      StoreHouses: [],
+      currentHouse: "",
+      ManagerID: this.firebase.auth().currentUser.email,
     };
   },
   methods: {
@@ -76,6 +78,9 @@ export default {
       console.log(index);
       console.log(row);
       console.log(this.productTable[index]);
+    },
+    selectHouse(val) {
+      this.currentHouse = val;
     },
     getStoreHouse(mid) {
       this.axios
@@ -106,15 +111,15 @@ export default {
       console.log(index);
       console.log(row);
       //------------------------
-      let ShopManagerID = this.firebase.auth().currentUser.email;
-      let StoreHouseID = this.getStoreHouse(ShopManagerID);
+      let ShopManagerID = this.ManagerID;
+      let StoreHouseID = this.currentHouse;
       let SupplierID = row.SupplierID;
       let ProductID = row.ProductID;
       let Num = row.number;
 
       let add = [StoreHouseID, ShopManagerID, SupplierID, ProductID, Num];
       console.log(add);
-      /*
+      
       //post 寫法
       this.axios.post('http://127.0.0.1:9000/nn/orderButton', {
         // post 參數放這裡
@@ -124,9 +129,11 @@ export default {
         console.log(error)
         this.error = 'errorl'
         console.log('order error')
+      })
+      .then(function() {
+        row.Num=0;
       });
       //------------------------
-      */
     },
     ////////
     setPage(val) {
@@ -156,7 +163,7 @@ export default {
         let resobj = JSON.parse(res); // 再變 object
         // 就可以做其他處理 像存到data 裡面
         // Date and Oid
-        console.log(resobj.data);
+        //console.log(resobj.data);
         this.productTable = resobj.data;
         for (let i = 0; i < this.productTable.length; i++) {
           this.productTable[i].number = 0;
@@ -169,6 +176,27 @@ export default {
         // always executed
       });
     //---------
+    this.axios
+      .get("http://127.0.0.1:9000/ni/GetStoreHouseID", {
+        params: {
+          ManagerID: this.firebase.auth().currentUser.email,
+        },
+      })
+      .then((response) => {
+        //  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res); // 再變 object
+        // 就可以做其他處理 像存到data 裡面
+        // Date and Oid
+        this.StoreHouses = resobj.data;
+        console.log("storehouse", this.StoreHouses);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
   },
 };
 </script>
