@@ -139,7 +139,7 @@ function searchProduct(ShopID, Type, page = 1) {
 
 // customer click Cart  -------------------------
 function clickCart(CustomerID) {
-  const data = db.query(`SELECT Cart.CustomerID AS CustomerID, Product.Name AS Name, Cart.Price AS Price, Cart.ShopID, Cart.Num AS NumberInCart, 
+  const data = db.query(`SELECT Product.Name AS Name, Cart.ProductID, Cart.ProductSupplierID, Cart.Price AS Price, Cart.ShopID, Cart.Num AS NumberInCart, 
                                 For_Sell.Num AS RemainNumber
                           FROM Cart LEFT JOIN For_Sell ON For_Sell.ShopID = Cart.ShopID 
                                 AND For_Sell.ProductSupplierID = Cart.ProductSupplierID
