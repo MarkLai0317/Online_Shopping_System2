@@ -5,17 +5,17 @@
   :data="currentPage" 
   style="width: 100%"
   >
-    <el-table-column prop="product" label="Product" width="150" />
-    <el-table-column prop="supplier" label="Supplier" width="150" />
-    <el-table-column prop="number" label="Number" width="150"/>
-    <el-table-column prop="price" label="Price" width="150"/>
+    <el-table-column prop="ProductName" label="Product" width="150" />
+    <el-table-column prop="SupplierID" label="Supplier" width="150" />
+    <el-table-column prop="Num" label="Number" width="150"/>
+    <el-table-column prop="Price" label="Price" width="150"/>
 
   </el-table>
   <el-pagination
     background
     layout="prev, pager, next"
     :page-size="pageSize"
-    :total="this.productTable.length"
+    :total="this.forSaleTable.length"
     @current-change="setPage">
   </el-pagination>
 
@@ -30,9 +30,9 @@
   :data="productTable" 
   style="width: 100%"
   >
-    <el-table-column prop="product" label="Product" width="150" />
-    <el-table-column prop="supplier" label="Supplier" width="150" />
-    <el-table-column prop="remain" label="Remaining" width="150" /> 
+    <el-table-column prop="ProductName" label="Product" width="150" />
+    <el-table-column prop="SupplierID" label="Supplier" width="150" />
+    <el-table-column prop="Num" label="Remaining" width="150" /> 
 
     <el-table-column label="Number">
       <template #default="scope">
@@ -76,130 +76,59 @@ export default {
     return {
       page: 1,
       pageSize: 5,
-      productTable: [
-        {
-          isForSale: true,
-          product: 'apple',
-          supplier: 'qwer',
-          price: 50,
-          number: 5,
-          remain: 34
-        },
-        {
-          isForSale: true,
-          product: 'orange',
-          supplier: 'asdf',
-          price: 39,
-          number: 10,
-          remain: 50
-        },
-        {
-          isForSale: true,
-          product: 'banna',
-          supplier: 'zxcv',
-          price: 15,
-          number: 3,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'dick',
-          supplier: 'Shawn',
-          price: 999,
-          number: 4,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'orange',
-          supplier: 'asdf',
-          price: 60,
-          number: 11,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'banna',
-          supplier: 'zxcv',
-          price: 20,
-          number: 89,
-          remain: 100
-          
-        },
-        {
-          isForSale: true,
-          product: 'dick',
-          supplier: 'Shawn',
-          price: 8888,
-          number: 99,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'apple',
-          supplier: 'qwer',
-          price: 50,
-          number: 5,
-          remain: 34
-        },
-        {
-          isForSale: true,
-          product: 'orange',
-          supplier: 'asdf',
-          price: 39,
-          number: 10,
-          remain: 50
-        },
-        {
-          isForSale: true,
-          product: 'banna',
-          supplier: 'zxcv',
-          price: 15,
-          number: 3,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'dick',
-          supplier: 'Shawn',
-          price: 999,
-          number: 4,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'orange',
-          supplier: 'asdf',
-          price: 60,
-          number: 11,
-          remain: 100
-        },
-        {
-          isForSale: true,
-          product: 'banna',
-          supplier: 'zxcv',
-          price: 20,
-          number: 89,
-          remain: 100
-          
-        },
-        {
-          isForSale: true,
-          product: 'dick',
-          supplier: 'Shawn',
-          price: 8888,
-          number: 99,
-          remain: 100
-        },
-      ],
+      forSaleTable: [],
+      productTable: [],
     }
   },
   methods: {
     getForSaleTable(){
       console.log("get forSale")
+      this.axios.get('http://127.0.0.1:9000/ni/GetForsale', {
+        params: {
+          ManagerID: this.firebase.auth().currentUser.email
+        }
+      })
+      .then(response=> {
+        let res = JSON.stringify(response.data); 
+        let resobj = JSON.parse(res)
+        this.forSaleTable = resobj.data
+        console.log(this.forSaleTable)
+        
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
     },
     getHaveTable(){
       console.log("get Have")
+      this.axios.get('http://127.0.0.1:9000/ni/GetHave', {
+        params: {
+          ManagerID: this.firebase.auth().currentUser.email
+        }
+      })
+      .then(response=> {
+        let res = JSON.stringify(response.data); 
+        let resobj = JSON.parse(res)
+        this.productTable = resobj.data
+        // console.log("data:")
+        // console.log(resobj.data)
+        for(var i=0;i<this.productTable.length;++i){
+          this.productTable[i].number = 1
+          this.productTable[i].price = 50
+        }
+        console.log(this.productTable)
+        
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+        
+      })
     },
     changeNumber(index,row){
         console.log(index)
@@ -209,12 +138,54 @@ export default {
     changePrice(index,row) {
       console.log(index)
       console.log(row)
+      /*
+      this.axios.post('http://127.0.0.1:9000/ni/changePrice', {
+        // post 參數放這裡
+        CustomerID: this.firebase.auth().currentUser.email,
+        ShopID: row.ShopID,
+        ProductSupplierID: row.SupplierID,
+        ProductID: row.ProductID
+      })
+      .then(response => {// 回傳的 response 處理
+        console.log(response);
+        let res = JSON.stringify(response.data); // 先 變字串
+        let resobj = JSON.parse(res) 
+        if(resobj.error){
+          this.error = resobj.error
+        }
+        else{
+          console.log('change price succeed!')
+        }
+
+      })
+      */
       this.getForSaleTable()
     },
     ////////
     
     handleAdd(index, row) {
       console.log(index, row);
+      /*
+      this.axios.post('http://127.0.0.1:9000/nn/add', {
+        // post 參數放這裡
+        CustomerID: this.firebase.auth().currentUser.email,
+        ShopID: row.ShopID,
+        ProductSupplierID: row.SupplierID,
+        ProductID: row.ProductID
+      })
+      .then(response => {// 回傳的 response 處理
+        console.log(response);
+        let res = JSON.stringify(response.data); // 先 變字串
+        let resobj = JSON.parse(res) 
+        if(resobj.error){
+          this.error = resobj.error
+        }
+        else{
+          console.log('add succeed!')
+        }
+
+      })
+      */
       this.getForSaleTable()
       this.getHaveTable()
     },
@@ -223,9 +194,15 @@ export default {
       this.page = val
     }
   },
+
+  created(){
+    this.getForSaleTable()
+    this.getHaveTable()
+  },
+
   computed: {
     currentPage(){
-      return this.productTable.slice(this.pageSize*this.page-this.pageSize,this.pageSize*this.page)
+      return this.forSaleTable.slice(this.pageSize*this.page-this.pageSize,this.pageSize*this.page)
     }
   }
 }
