@@ -74,5 +74,12 @@ router.get('/GetForsale', function(req, res, next) {
   next(err);
   }  
 });
-
+router.post('/PriceChange', function(req, res, next) {
+  try {
+    res.json(ni.PriceChange(req.body));
+  } catch(err) {
+    console.error(`Error while changing price `, err.message);
+    next(err);
+  }
+});
 module.exports = router;
