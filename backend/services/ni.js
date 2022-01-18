@@ -30,6 +30,7 @@ function TradeHistory(ManagerID,page=1){
     var HID=JSON.stringify(hid[i].HistoryID);
     //Integer.parseInt(jsonObj.get("data[i].HistoryID"));
     let product= db.query(`select Trade_History.Time,Product.Name as ProductName,Trade_History.Num
+                            ,Price
                              from Trade_History,
                              Product where Trade_History.ShopManagerID= ? and 
                              Trade_History.ProductSupplierID=Product.SupplierID and 
