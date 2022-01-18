@@ -110,7 +110,7 @@ function CreateNewManager(data){
   ShopID=ShopID+1;
   db.run(`INSERT INTO Shop(ManagerID,ShopID,Name,TotalRevenue) VALUES (@Email,@ShopID,@ShopName, 0)`
                           ,{Email,ShopID,ShopName});
-  let message='Error in creating Manager';
+  let error='Error in creating Manager';
   
     if (result.changes) {
        error='';
@@ -140,6 +140,19 @@ function GetForSale(ManagerID){
                          and For_Sell.ProductID=Product.ProductID`,[ManagerID])
   return {data};
 }
+function PriceChange(data){
+  const{ManagerID,ProductID,SupplierID,Price}=data;
+  const result=db.run(`UPDATE For_Sell SET Price= @Price 
+          where ShopManagerID= @ManagerID and ProductSupplierID= @SupplierID and ProductID= @ProductID
+          `,{Price,ManagerID,SupplierID,ProductID})
+  let error='Error in changing price';
+  
+    if (result.changes) {
+       error='';
+  }
+  return {error};
+  
+}
 
 module.exports = {
   Revenue,
@@ -150,5 +163,6 @@ module.exports = {
   CreateNewManager,
   GetStoreHouseID,
   GetHave,
-  GetForSale
+  GetForSale,
+  PriceChange
 }
