@@ -117,7 +117,7 @@ export default {
         // console.log(resobj.data)
         for(var i=0;i<this.productTable.length;++i){
           this.productTable[i].number = 1
-          this.productTable[i].price = 50
+          this.productTable[i].price = 150
         }
         console.log(this.productTable)
         
@@ -165,13 +165,16 @@ export default {
     
     handleAdd(index, row) {
       console.log(index, row);
-      /*
-      this.axios.post('http://127.0.0.1:9000/nn/add', {
+      
+      this.axios.post('http://127.0.0.1:9000/nn/ForSell', {
         // post 參數放這裡
-        CustomerID: this.firebase.auth().currentUser.email,
-        ShopID: row.ShopID,
+        StoreHouseID: row.StoreHouseID,
+        ShopManagerID: this.firebase.auth().currentUser.email,
+        // ShopID: row.ShopID,
         ProductSupplierID: row.SupplierID,
-        ProductID: row.ProductID
+        ProductID: row.ProductID,
+        Num: row.number,
+        price: row.price
       })
       .then(response => {// 回傳的 response 處理
         console.log(response);
@@ -181,11 +184,11 @@ export default {
           this.error = resobj.error
         }
         else{
-          console.log('add succeed!')
+          console.log('add to ForSale succeed!')
         }
 
       })
-      */
+      
       this.getForSaleTable()
       this.getHaveTable()
     },
