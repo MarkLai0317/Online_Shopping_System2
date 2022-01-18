@@ -64,34 +64,20 @@ export default {
       ShopValue: '',
       // api
       TypeOptions: [{
-          value: 'fruit',
-          label: 'fruit'
-        }, {
-          value: 'shoes',
-          label: 'shoes'
-        }, {
           value: '',
           label: 'all'
-        }
-      ],
+        }],
       ShopOptions: [{
-          value: 91,
-          label: 'shop91'
-        }, {
-          value: 90,
-          label: 'shop92'
-        }, {
           value: '',
           label: 'all'
-        },
-      ]
-
-      
+        },]
     }
   },
   created(){
     this.getPage(1),
-    this.getMaxPage()
+    this.getMaxPage(),
+    this.getAllType(),
+    this.getAllShopID()
   },
   methods: {
     // get the current page
@@ -127,15 +113,41 @@ export default {
     pressAdd(index,row) {
       console.log(index)
       console.log(row)
+      this.axios.post('http://127.0.0.1:9000/nn/add', {
+        // post 參數放這裡
+        CustomerID: this.firebase.auth().currentUser.email,
+        ShopID: row.ShopID,
+        ProductSupplierID: row.SupplierID,
+        ProductID: row.ProductID
+      })
+      .then(response => {// 回傳的 response 處理
+        console.log(response);
+        let res = JSON.stringify(response.data); // 先 變字串
+        let resobj = JSON.parse(res) 
+        if(resobj.error){
+          this.error = resobj.error
+        }
+        else{
+          console.log('add succeed!')
+        }
+
+      })
+      .catch(error => {
+        console.log(error)
+        this.error = 'register fail'
+        console.log(this.page)
+      });
     },
     ////
     selectType(val){
       this.currentType = val
       this.getPage(this.page)
+      this.getMaxPage()
     },
     selectShop(val){
       this.currentShopName = val
       this.getPage(this.page)
+      this.getMaxPage()
     },
     // get the total number of pages 
     getMaxPage(){
@@ -159,8 +171,56 @@ export default {
         // always executed
       })
 
+    },
+    getAllType(){
+      this.axios.get('http://127.0.0.1:9000/nn/getType', {
+        params: {
+          // no parameters
+        }
+      })
+      .then(response=> {
+        let res = JSON.stringify(response.data); 
+        let resobj = JSON.parse(res)
+        let arr = resobj.data
+        console.log(arr)
+        for(var i=0;i<arr.length;++i){
+          this.TypeOptions.push({ value: arr[i].Type, label:arr[i].Type })
+        }
+
+        
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+    },
+    getAllShopID(){
+      this.axios.get('http://127.0.0.1:9000/nn/getShopList', {
+        params: {
+          // no parameters
+        }
+      })
+      .then(response=> {
+        let res = JSON.stringify(response.data); 
+        let resobj = JSON.parse(res)
+        let arr = resobj.data
+        console.log(arr)
+        for(var i=0;i<arr.length;++i){
+          this.ShopOptions.push({ value: arr[i].ShopID, label: arr[i].ShopName })
+        }
+        
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
     }
-    
+
+
     
   },
   computed: {
