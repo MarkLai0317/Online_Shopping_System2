@@ -52,21 +52,65 @@ export default {
         if(row.NumberInCart > 0){
           row.NumberInCart --
           row.RemainNumber ++
+          this.axios.post("http://127.0.0.1:9000/nn/subtractProductNumInCart", {
+            // post 參數放這裡
+            CustomerID: this.firebase.auth().currentUser.email,
+            ShopID: row.ShopID,
+            ProductSupplierID: row.ProductSupplierID,
+            ProductID: row.ProductID,
+          })
+          .then(response => {// 回傳的 response 處理
+            console.log(response);
+            let res = JSON.stringify(response.data); // 先 變字串
+          let resobj = JSON.parse(res) 
+          if(resobj.error){
+            this.error = resobj.error
+          }
+          else{
+            console.log('success')
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.error = 'subtract fail'
+          console.log(this.page)
+        });
       }
     },
     toggleAdd(row) {
         if(row.RemainNumber > 0){
           row.NumberInCart ++
           row.RemainNumber --
-        }
+          this.axios.post("http://127.0.0.1:9000/nn/addProductNumInCart", {
+            // post 參數放這裡
+            CustomerID: this.firebase.auth().currentUser.email,
+            ShopID: row.ShopID,
+            ProductSupplierID: row.ProductSupplierID,
+            ProductID: row.ProductID,
+          })
+          .then(response => {// 回傳的 response 處理
+            console.log(response);
+            let res = JSON.stringify(response.data); // 先 變字串
+          let resobj = JSON.parse(res) 
+          if(resobj.error){
+            this.error = resobj.error
+          }
+          else{
+            console.log('success')
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.error = 'add fail'
+          console.log(this.page)
+        });
+      }
     },
     toggleSubmit() {
         //post 寫法
       this.axios.post('http://127.0.0.1:9000/nn/buy', {
         // post 參數放這裡
-        Email: 'test1@gmail.com',
-        Name: 'test1',
-        PhoneNum: '0919191919'
+        CustomerID: this.firebase.auth().currentUser.email,
       })
       .then(response => {// 回傳的 response 處理
         console.log(response);
@@ -76,21 +120,12 @@ export default {
           this.error = resobj.error
         }
         else{
-          /*this.firebase
-            .auth()
-            .createUserWithEmailAndPassword(this.email, this.password)
-            .then(() => {
-              console.log("here");
-              this.$router.replace({ name: "Buy" });
-            })
-            .catch(error => (this.error = error));*/
           console.log('success')
         }
-
       })
       .catch(error => {
         console.log(error)
-        this.error = 'register fail'
+        this.error = 'buy fail'
         console.log(this.page)
       });
     },
@@ -98,7 +133,7 @@ export default {
         this.axios.get('http://127.0.0.1:9000/nn/clickCart', {
         params: {
           //get 參數放這裡
-          CustomerID: '108703029@nccu.edu.tw' ,
+          CustomerID: this.firebase.auth().currentUser.email ,
           
         }
       })
@@ -111,9 +146,6 @@ export default {
       })
       .catch(error => {
         console.log(error);
-      })
-      .then(function () {
-        // always executed
       })
     }
   },
