@@ -1,25 +1,24 @@
+
+
+
 <template>
   <div>
-    <!--
     <div>
-    <input type="button" @click="add()"/>
+      <el-select v-model="value" placeholder="Select Year" @change="selectact">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
     </div>
-    -->
-    <el-select v-model="value" placeholder="Select Year" @change="selectact">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      >
-      </el-option>
-    </el-select>
-  </div>
-  <div>
-    <apexchart type="line" height="500" width="900" align="center" :options="chartOptions" :series="series"></apexchart>
+    <div>
+      <apexchart type="line" height="500" width="900" align="center" :options="chartOptions" :series="series"></apexchart>
+    </div>
   </div>
 </template>
-
 
 
 
@@ -30,6 +29,8 @@ import VueApexCharts from "vue3-apexcharts";
 export default defineComponent({  
   created(){
     this.getSensorData()
+    this.value=this.options[0].value;
+    //this.presetALL()
   },
   setup() {
     return {
@@ -139,6 +140,9 @@ export default defineComponent({
     },
     */
     selectact(val){
+      console.log('select ALL')
+      console.log(this.input)
+      
       if(val=='ALL'){
         for(let i in this.input){
           //    初始化
@@ -190,6 +194,7 @@ export default defineComponent({
         this.input.sort(function compare(a,b){
           return a.year<b.year
         })
+        this.presetALL()
         this.trans_to_options()
         console.log(this.input)
         //    end
@@ -212,6 +217,21 @@ export default defineComponent({
         else if(this.input[i].year!==this.input[i-1].year){
           this.options.push({value:this.input[i].year,lable:this.input[i].year})
         }
+      }
+    },
+
+    presetALL(){
+      for(let i in this.input){
+        //    初始化
+        if(i==0){
+          this.series=this.series.splice(0,0)
+          this.series.push({name:this.input[i].year,data:[0,0,0,0,0,0,0,0,0,0,0,0]})
+        }
+        else if(this.input[i].year!=this.input[i-1].year){
+          this.series.push({name:this.input[i].year,data:[0,0,0,0,0,0,0,0,0,0,0,0]})
+        }
+        //    更新資料(當前的最後)
+        this.series[this.series.length-1].data[this.input[i].month-1]+=this.input[i].price
       }
     },
     

@@ -50,6 +50,36 @@ router.post('/register/Manager', function(req, res, next) {
     next(err);
   }
 });
-
-
+router.get('/GetStoreHouseID', function(req, res, next) {
+  try {
+  res.json(ni.GetStoreHouseID(req.query.ManagerID));
+  } catch(err) {
+  console.error(`Error while getting StoreHouseID `, err.message);
+  next(err);
+  }  
+});
+router.get('/GetHave', function(req, res, next) {
+  try {
+  res.json(ni.GetHave(req.query.ManagerID));
+  } catch(err) {
+  console.error(`Error while getting Have `, err.message);
+  next(err);
+  }  
+});
+router.get('/GetForsale', function(req, res, next) {
+  try {
+  res.json(ni.GetForSale(req.query.ManagerID));
+  } catch(err) {
+  console.error(`Error while getting ForSale `, err.message);
+  next(err);
+  }  
+});
+router.post('/PriceChange', function(req, res, next) {
+  try {
+    res.json(ni.PriceChange(req.body));
+  } catch(err) {
+    console.error(`Error while changing price `, err.message);
+    next(err);
+  }
+});
 module.exports = router;

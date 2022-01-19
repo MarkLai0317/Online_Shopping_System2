@@ -117,6 +117,13 @@ function searchProduct(ShopID, Type, page = 1) {
     return { data };
 
   } else {
+
+
+
+
+
+
+
     const data = db.query(`SELECT  Product.ProductID as ProductID, Product.SupplierID as SupplierID, 
                           For_Sell.ShopID as ShopID, Product.Name as ProductName, Shop.Name as ShopName,
                           Product.Type as Type, For_Sell.Num AS RemainNumber, For_Sell.Price as Price                        
@@ -132,10 +139,12 @@ function searchProduct(ShopID, Type, page = 1) {
 
 // customer click Cart  -------------------------
 function clickCart(CustomerID) {
-  const data = db.query(`SELECT Cart.CustomerID AS CustomerID, Cart.Num AS NumberInCart, For_Sell.Num AS RemainNumber
+  const data = db.query(`SELECT Product.Name AS Name, Cart.ProductID, Cart.ProductSupplierID, Cart.Price AS Price, Cart.ShopID, Cart.Num AS NumberInCart, 
+                                For_Sell.Num AS RemainNumber
                           FROM Cart LEFT JOIN For_Sell ON For_Sell.ShopID = Cart.ShopID 
-                          AND For_Sell.ProductSupplierID = Cart.ProductSupplierID
-                          AND For_Sell.ProductID = Cart.ProductID
+                                AND For_Sell.ProductSupplierID = Cart.ProductSupplierID
+                                AND For_Sell.ProductID = Cart.ProductID 
+                                LEFT JOIN Product ON Cart.ProductSupplierID = Product.SupplierID AND Cart.ProductID = Product.ProductID
                           WHERE Cart.CustomerID = ?` , [CustomerID]);
   return { data };
 }
@@ -426,17 +435,50 @@ function pageTradeHistory(ManagerID, page = 1) {
 
 // forSale -------------------------------------
 function forSell(data) {
-  const { ShopManagerID, ProductSupplierID, ProductID, Num } = data;
+  const { StoreHouseID, ShopManagerID, ProductSupplierID, ProductID, Num, Price } = data;
 
-  const result = db.run(` UPDATE For_Sell
-                          SET Num = @Num
-                          WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
-                          AND ProductID = @ProductID`, { Num, ShopManagerID, ProductSupplierID, ProductID });
+  // find shopID
+  var s = db.query(`SELECT ShopID
+                    FROM Shop
+                    WHERE ManagerID = ?`, [ShopManagerID]);
+  var t = JSON.stringify(s[0].ShopID);
+  const ShopID = JSON.parse(t);
 
-  let error = 'Error in updating ForSell product number.';
-  if (result.changes) {
-    error = '';
+  // check whether this product is forSell or not
+  const r = db.query(`SELECT *
+                      FROM For_Sell 
+                      WHERE ShopManagerID = ? AND ProductSupplierID = ? AND ProductID = ? `
+    , [ShopManagerID, ProductSupplierID, ProductID]);
+
+  let error = 'Error in updating forSell product number.'
+
+  // if r.length == 0 insert product, else update For_Sell num
+  if (r.length == 0) {
+    const t = db.run(`INSERT INTO For_Sell (ShopManagerID, ShopID, ProductSupplierID, ProductID, Price, Num)
+                      VALUES (@ShopManagerID, @ShopID, @ProductSupplierID, @ProductID, @Price, @Num)`,
+      { ShopManagerID, ShopID, ProductSupplierID, ProductID, Price, Num });
+
+    if (t.changes) {
+      error = ''
+    }
+  } else {
+    const result = db.run(` UPDATE For_Sell
+                            SET Num = @Num + Num
+                            WHERE ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
+                                  AND ProductID = @ProductID`, { Num, ShopManagerID, ProductSupplierID, ProductID });
+
+    error = 'Error in updating ForSell product number.';
+    if (result.changes) {
+      error = '';
+    }
   }
+
+  // decrease Have Num 
+  db.run(`UPDATE Have
+          SET Num = Num - @Num
+          WHERE StoreHouseID = @StoreHouseID AND ShopManagerID = @ShopManagerID AND ProductSupplierID = @ProductSupplierID 
+                AND ProductID = @ProductID`, { Num, StoreHouseID, ShopManagerID, ProductSupplierID, ProductID });
+
 
   return { error };
 }
