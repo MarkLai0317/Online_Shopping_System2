@@ -9,13 +9,15 @@
     <el-table-column prop="Price" label="Price" show-overflow-tooltip align="center"/>
     <el-table-column width="100" align="center">
       <template #default="scope">
-        <el-button @click="toggleMinus(scope.row)">-</el-button>
+        <el-button @click="toggleMinus(scope.row)"
+        :disabled="scope.row.NumberInCart<=0">-</el-button>
       </template>
     </el-table-column>
     <el-table-column prop="NumberInCart" label="Quantity" show-overflow-tooltip align="center"/>
     <el-table-column width="100" align="center">
       <template #default="scope">
-        <el-button @click="toggleAdd(scope.row)">+</el-button>
+        <el-button @click="toggleAdd(scope.row)"
+        :disabled="scope.row.NumberInCart>=scope.row.RemainNumber">+</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -49,9 +51,7 @@ export default {
       return total
     },
     toggleMinus(row) {
-        if(row.NumberInCart > 0){
-          row.NumberInCart --
-          row.RemainNumber ++
+        
           this.axios.post("http://127.0.0.1:9000/nn/subtractProductNumInCart", {
             // post 參數放這裡
             CustomerID: this.firebase.auth().currentUser.email,
@@ -68,6 +68,7 @@ export default {
           }
           else{
             console.log('success')
+            this.getSensorData()
           }
         })
         .catch(error => {
@@ -75,12 +76,10 @@ export default {
           this.error = 'subtract fail'
           console.log(this.page)
         });
-      }
+      
     },
     toggleAdd(row) {
-        if(row.RemainNumber > 0){
-          row.NumberInCart ++
-          row.RemainNumber --
+        
           this.axios.post("http://127.0.0.1:9000/nn/addProductNumInCart", {
             // post 參數放這裡
             CustomerID: this.firebase.auth().currentUser.email,
@@ -97,6 +96,7 @@ export default {
           }
           else{
             console.log('success')
+            this.getSensorData()
           }
         })
         .catch(error => {
@@ -104,7 +104,7 @@ export default {
           this.error = 'add fail'
           console.log(this.page)
         });
-      }
+      
     },
     toggleSubmit() {
         //post 寫法
