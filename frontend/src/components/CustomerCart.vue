@@ -121,6 +121,7 @@ export default {
         }
         else{
           console.log('success')
+          this.getSensorData()
         }
       })
       .catch(error => {
