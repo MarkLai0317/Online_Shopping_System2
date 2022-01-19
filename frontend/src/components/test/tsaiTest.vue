@@ -30,16 +30,17 @@
   :data="productTable" 
   style="width: 100%"
   >
-    <el-table-column prop="ProductName" label="Product" width="150" />
-    <el-table-column prop="SupplierID" label="Supplier" width="150" />
-    <el-table-column prop="Num" label="Remaining" width="150" /> 
+    <el-table-column prop="ProductName" label="Product" width="100" />
+    <el-table-column prop="SupplierID" label="Supplier" width="100" />
+    <el-table-column prop="StoreHouseID" label="StoreHouse" width="100" /> 
+    <el-table-column prop="Num" label="Remaining" width="100" /> 
 
     <el-table-column label="Number">
       <template #default="scope">
         <el-input-number
           v-model="scope.row.number"
           size="mini"
-          :max="scope.row.remain"
+          :max="scope.row.Num"
           :min="1"
           @change="changeNumber(scope.$index, scope.row)"></el-input-number>
       </template>
@@ -51,7 +52,7 @@
           v-model="scope.row.price"
           size="mini"
           :min="1"
-          @change="changePrice(scope.$index, scope.row)"></el-input-number>
+          @change="changePrice(scope.row)"></el-input-number>
           
       </template>
     </el-table-column> 
@@ -61,6 +62,7 @@
       <template #default="scope">
         <el-button
           size="mini"
+          :disabled="scope.row.number<=scope.row.Num?false:true"
           @click="handleAdd(scope.$index, scope.row)">Add</el-button>
       </template>
     </el-table-column> 
@@ -78,6 +80,8 @@ export default {
       pageSize: 5,
       forSaleTable: [],
       productTable: [],
+      priceState: [],
+      firstTimeAdd: true
     }
   },
   methods: {
@@ -115,9 +119,26 @@ export default {
         this.productTable = resobj.data
         // console.log("data:")
         // console.log(resobj.data)
+
         for(var i=0;i<this.productTable.length;++i){
           this.productTable[i].number = 1
-          this.productTable[i].price = 150
+           
+          var found = -1
+          for(var j=0;j<this.forSaleTable.length;++j){
+            if(this.productTable[i].ProductID == this.forSaleTable[j].ProductID &&
+            this.productTable[i].SupplierID == this.forSaleTable[j].SupplierID){
+              found = j
+            }
+          }
+          if(found == -1){
+            this.productTable[i].price = 150 
+          }else{
+            // console.log(this.forSaleTable[found].Price)
+            this.productTable[i].price = this.forSaleTable[found].Price
+          }
+           
+          // this.productTable[i].price = 150 
+            
         }
         console.log(this.productTable)
         
@@ -131,14 +152,15 @@ export default {
       })
     },
     changeNumber(index,row){
+      var qwer = false
+      if(qwer){
         console.log(index)
         console.log(row)
+      }
     },
     ///////////
-    changePrice(index,row) {
-      console.log(index)
-      console.log(row)
-      
+    changePrice(row) {
+
       this.axios.post('http://127.0.0.1:9000/ni/PriceChange', {
         // post 參數放這裡
         ManagerID: this.firebase.auth().currentUser.email,
@@ -155,12 +177,13 @@ export default {
         }
         else{
           console.log('change price succeed!')
-          this.getForSaleTable()
+          this.getForSaleTable() // ----
+          this.getHaveTable()
         }
 
       })
       
-      this.getForSaleTable()
+      // this.getForSaleTable()
     },
     ////////
     
@@ -202,6 +225,7 @@ export default {
   created(){
     this.getForSaleTable()
     this.getHaveTable()
+    
   },
 
   computed: {
