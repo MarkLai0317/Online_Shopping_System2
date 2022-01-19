@@ -42,7 +42,7 @@
       <!-- -->
       <el-table-column label="Order" width="80">
         <template #default="scope">
-          <el-button size="mini" @click="pressOrder(scope.$index, scope.row)"
+          <el-button size="mini" :disabled="this.currentHouse=='SelectHouse'" @click="pressOrder(scope.$index, scope.row)"
             >Order</el-button
           >
         </template>
@@ -69,7 +69,7 @@ export default {
       pageSize: 5,
       productTable: [],
       StoreHouses: [],
-      currentHouse: "",
+      currentHouse: 'SelectHouse',
       ManagerID: this.firebase.auth().currentUser.email,
     };
   },
