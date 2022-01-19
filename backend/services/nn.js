@@ -227,7 +227,7 @@ function history(CustomerID, page) {
   const res = db.query(`  SELECT  distinct HistoryID
                           FROM  Trade_History 
                           WHERE CustomerID = ?
-                          ORDER BY HistoryID` , [CustomerID]);
+                          ORDER BY HistoryID DESC` , [CustomerID]);
   const hid = res[index].HistoryID;
 
   // count totalPrice & get Time
