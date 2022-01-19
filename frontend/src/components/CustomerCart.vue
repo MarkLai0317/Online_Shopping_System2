@@ -20,6 +20,11 @@
         :disabled="scope.row.NumberInCart>=scope.row.RemainNumber">+</el-button>
       </template>
     </el-table-column>
+    <el-table-column width="100" align="center">
+      <template #default="scope">
+        <el-button @click="toggleDelete(scope.row)">delete</el-button>
+      </template>
+    </el-table-column>
   </el-table>
   <div>
     <p>Total Price: {{countTotal()}}</p>
@@ -43,6 +48,33 @@ export default {
   },
 
   methods: {
+    toggleDelete(row){
+      this.axios.post("http://127.0.0.1:9000/nn/deleteCart", {
+            // post 參數放這裡
+            CustomerID: this.firebase.auth().currentUser.email,
+            ShopID: row.ShopID,
+            ProductSupplierID: row.ProductSupplierID,
+            ProductID: row.ProductID,
+          })
+          .then(response => {// 回傳的 response 處理
+            console.log(response);
+            let res = JSON.stringify(response.data); // 先 變字串
+          let resobj = JSON.parse(res) 
+          if(resobj.error){
+            this.error = resobj.error
+          }
+          else{
+            console.log('success')
+            this.getSensorData()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.error = 'delete fail'
+          console.log(this.page)
+        });
+    },
+
     countTotal(){
       var total=0
       for(var i=0;i<this.tableData.length;++i){
