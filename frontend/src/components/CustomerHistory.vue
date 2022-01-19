@@ -4,7 +4,7 @@
       <p>Order history</p>
       <p />
       <el-header>
-        <p/>
+        <p />
         <el-row :gutter="30" justify="start">
           <el-col :span="2">
             <div class="grid-content">{{ order.Date }}</div>
@@ -25,11 +25,11 @@
           <el-table-column prop="Price" label="Price" width="100" />
         </el-table>
       </el-main>
-      <p/>
+      <p />
     </el-container>
-    <el-button  @click="lastPage">Last Page</el-button>
+    <el-button @click="lastPage" :disabled="this.page==1">Last Page</el-button>
     <el-box>{{ this.page }}</el-box>
-    <el-button  @click="nextPage">Next Page</el-button>
+    <el-button @click="nextPage" :disabled="this.page==this.maxPage">Next Page</el-button>
   </div>
 </template>
 
@@ -46,6 +46,7 @@ export default {
       },
       table:[
       ],
+      maxPage:'',
 
     };
   },
@@ -86,10 +87,10 @@ export default {
       console.log("last page");
     },
     nextPage() {
-     if (this.page + 1 > 0) { // where can get the limit of page
+     if (this.page + 1 <= this.maxPage) { // where can get the limit of page
         this.page += 1;
        }
-      //next page
+      //next pagegti
       //get 寫法
       this.axios.get('http://127.0.0.1:9000/nn/history', {
         params: {
@@ -119,9 +120,31 @@ export default {
       //---------
       console.log("next page");
     },
-  
+
   },
   created(){
+      this.axios.get('http://127.0.0.1:9000/nn/getHistoryNum', {
+        params: {
+          //get 參數放這裡
+          CustomerID: this.CustomerID,
+        }
+      })
+      .then(response=> {//  get 回來的 資料 處理
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res); // 再變 object
+        this.table = resobj;
+        // 就可以做其他處理 像存到data 裡面
+        this.maxPage = resobj;
+        console.log("Max page",this.maxPage);
+        })
+      .catch(error => {
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      })
+      //---------
+
     this.page=1;
     //get 寫法
       this.axios.get('http://127.0.0.1:9000/nn/history', {
