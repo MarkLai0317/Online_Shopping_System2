@@ -20,13 +20,10 @@ function TradeHistory(ManagerID,page=1){
                         where Trade_History.ShopManagerID= ? and 
                         Trade_History.ProductSupplierID=Product.SupplierID and 
                         Trade_History.ProductID=Product.ProductID
-                        GROUP BY Trade_History.HistoryID`,[ManagerID])
+                        GROUP BY Trade_History.HistoryID
+                        `,[ManagerID])
   for(i=0;i<hid.length;i++){
-    data.push({HistoryID:hid[i].HistoryID,
-               TotalPrice:hid[i].Price*hid[i].Num,
-               CustomerID:hid[i].CustomerID,
-               Receipt:[]
-              })
+    
     var HID=JSON.stringify(hid[i].HistoryID);
     //Integer.parseInt(jsonObj.get("data[i].HistoryID"));
     let product= db.query(`select Trade_History.Time,Product.Name as ProductName,Trade_History.Num
@@ -36,8 +33,15 @@ function TradeHistory(ManagerID,page=1){
                              Trade_History.ProductSupplierID=Product.SupplierID and 
                              Trade_History.ProductID=Product.ProductID and Trade_History.HistoryID= ? `
                              ,[ManagerID,HID])
-                             
-                             
+    var price=0;
+    for(j=0;j<product.length;j++){
+      price+=product[j].Price*product[j].Num;
+    }                         
+    data.push({HistoryID:hid[i].HistoryID,
+    TotalPrice:price,
+    CustomerID:hid[i].CustomerID,
+    Receipt:[]
+    })                         
     data[i].Receipt=product
   
   }
