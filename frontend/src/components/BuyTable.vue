@@ -33,6 +33,7 @@
       <template #default="scope" >
         <el-button
           size="mini"
+          :disabled="scope.row.RemainNumber<1?true:false"
           @click="pressAdd(scope.$index, scope.row)">Add</el-button>
       </template>
     </el-table-column>
