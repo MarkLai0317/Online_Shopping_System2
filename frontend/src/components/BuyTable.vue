@@ -1,6 +1,6 @@
 <template>
 <div>
-    <td nowrap>select type: </td>
+    <h4>Select Type: </h4>
     <el-select v-model="TypeValue" placeholder="Select Type" @change="selectType">
       <el-option
         v-for="item in TypeOptions"
@@ -10,7 +10,8 @@
       </el-option>
     </el-select>
 
-    <td nowrap>select shop: </td>
+    <!-- <td nowrap>select shop: </td> -->
+    <h4>Select Shop</h4>
     <el-select v-model="ShopValue" placeholder="Select Type" @change="selectShop">
       <el-option
         v-for="item in ShopOptions"
@@ -20,16 +21,16 @@
       </el-option>
     </el-select>
 
-  <el-table :data="currentPage" style="width: 100%">
+  <el-table :data="currentPage" style="width: 100%" align="center">
     
-    <el-table-column fixed prop="ProductName" label="Product" width="150" />
-    <el-table-column prop="ShopName" label="Shop" width="150" />
-    <el-table-column prop="RemainNumber" label="Remain" width="150"/>
-    <el-table-column prop="Price" label="Price" width="150"/>
-    <el-table-column prop="Type" label="Type" width="150"/>
+    <el-table-column prop="ProductName" label="Product" width="150" align="center"/>
+    <el-table-column prop="ShopName" label="Shop" width="150" align="center"/>
+    <el-table-column prop="RemainNumber" label="Remain" width="150" align="center"/>
+    <el-table-column prop="Price" label="Price" width="150" align="center"/>
+    <el-table-column prop="Type" label="Type" width="150" align="center"/>
     <!-- -->
-    <el-table-column>
-      <template #default="scope">
+    <el-table-column width="150" align="center">
+      <template #default="scope" >
         <el-button
           size="mini"
           @click="pressAdd(scope.$index, scope.row)">Add</el-button>
