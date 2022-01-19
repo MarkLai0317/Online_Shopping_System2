@@ -7,7 +7,8 @@ function Revenue(ManagerID){
 
   const data= db.query(`SELECT Time,Price
                         from Trade_History
-                        where ShopManagerID= ?`,[ManagerID]);
+                        where ShopManagerID= ?
+                        ORDER BY Time`,[ManagerID]);
   return {data};
 }
 //manager tradehistory
