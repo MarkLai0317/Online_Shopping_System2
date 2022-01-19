@@ -21,5 +21,38 @@ router.post('/register/Customer', function(req, res, next) {
   }
 });
 
+router.post('/register/Manager', function(req, res, next) {
+  try {
+    res.json(mark.createNewManager(req.body));
+  } catch(err) {
+    console.error(`Error while adding Manager `, err.message);
+    next(err);
+  }
+});
+
+router.get('/existCustomer', function(req, res, next) {
+  try{
+    res.json(mark.checkCustomer(req.query.email))
+  }
+  
+  catch(err) {
+    console.error(`email exist `, err.message);
+    next(err);
+  }
+  
+})
+
+router.get('/existManager', function(req, res, next) {
+  try{
+    res.json(mark.checkManager(req.query.email))
+  }
+  
+  catch(err) {
+    console.error(`email exist `, err.message);
+    next(err);
+  }
+  
+})
+
 
 module.exports = router;
