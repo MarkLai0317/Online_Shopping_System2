@@ -8,11 +8,11 @@
       <div class="password">
         <input type="password" placeholder="password" v-model="password" />
       </div>
-      <button>Login</button>
+      <button class="loginButton">Login</button>
     </form>
     <div class="error" v-if="error">{{error.message}}</div>
     <h3>Don't have an account?</h3>
-    <el-botton @click="toRegister" type='text'>Register</el-botton>
+    <el-button @click="toRegister">Register</el-button>
   </div>
 </template>
 
@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     toRegister(){
-      this.$router.push({ name: 'CustomerRegister'})
+      this.$router.push({ name: 'ManagerRegister'})
     },
     pressed() {
       this.firebase
@@ -63,7 +63,7 @@ input {
   margin: 20px;
   font-size: 21px;
 }
-button {
+.loginButton {
   width: 400px;
   height: 75px;
   font-size: 100%;

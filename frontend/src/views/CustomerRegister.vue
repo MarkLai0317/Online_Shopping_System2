@@ -53,36 +53,54 @@ export default {
   methods: {
     pressed() {
 
-      this.axios.post('http://127.0.0.1:9000/mark/register/customer', {
-        // post 參數放這裡
-        Email: this.email,
-        Name: this.name,
-        PhoneNum: this.phoneNumber
-      })
-      .then(response => {// 回傳的 response 處理
-        console.log(response);
-        let res = JSON.stringify(response.data); // 先 變字串
-        let resobj = JSON.parse(res) 
-        if(resobj.error){
-          this.error = resobj.error
+      this.axios.get('http://127.0.0.1:9000/mark/existCustomer',{
+        params: {
+          //get 參數放這裡
+          email: this.email,
         }
-        else{
-          firebase
-            .auth()
-            .createUserWithEmailAndPassword(this.email, this.password)
-            .then(() => {
-              console.log("here");
-              this.$router.replace({ name: "Buy" });
-            })
-            .catch(error => (this.error = error));
+      }).then(response => {
+        
+        let res = JSON.stringify(response.data); // 先變字串
+        let resobj = JSON.parse(res)
+        
+        if(!resobj.exist){
+          this.axios.post('http://127.0.0.1:9000/mark/register/Customer', {
+            // post 參數放這裡
+            Email: this.email,
+            Name: this.name,
+            PhoneNum: this.phoneNumber
+          })
+          .then(response => {// 回傳的 response 處理
+            console.log(response);
+            let res = JSON.stringify(response.data); // 先 變字串
+            let resobj = JSON.parse(res) 
+            if(resobj.error){
+              this.error = resobj.error
+            }
+            else{
+              firebase
+                .auth()
+                .createUserWithEmailAndPassword(this.email, this.password)
+                .then(() => {
+                  console.log("here");
+                  this.$router.replace({ name: "Buy" });
+                })
+                .catch(error => (this.error = error));
+            }
+
+          })
+          .catch(error => {
+            console.log(error);
+            this.error = 'register fail'
+
+          });
+        }else{
+          this.error = 'user exist'
         }
 
       })
-      .catch(error => {
-        console.log(error);
-        this.error = 'register fail'
+      
 
-      });
 
       
       
