@@ -117,11 +117,11 @@ function CreateNewManager(data){
   }
   return {error};
 }
-function GetStoreHouseID(ManagerID){
-  const data = db.query(`SELECT  distinct(StoreHouseID) AS StoreHouseID
-                         from Have
-                         where ShopManagerID= ?
-                         `,[ManagerID])
+function GetStoreHouseID(){
+  const data = db.query(`SELECT StoreHouseID
+                         from Store_House
+                         
+                         `,[])
   return {data};
 }
 function GetHave(ManagerID){
