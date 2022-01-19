@@ -34,6 +34,7 @@
           <el-input-number
             v-model="scope.row.number"
             size="mini"
+            :min="1"
             @change="changeNumber(scope.$index, scope.row)"
           ></el-input-number>
         </template>
