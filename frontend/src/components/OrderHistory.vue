@@ -1,5 +1,5 @@
 <template>
-  
+  <div>
   <h1>Order History</h1>
   <!--
   <input type="button" @click="add()" />
@@ -16,6 +16,7 @@
         <el-table-column  prop="Num" label="Number"  align="center" />
         <el-table-column  prop="Time" label="Time"  align="center" />
     </el-table>
+  </div>
   </div>
   
 </template>

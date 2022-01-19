@@ -58,15 +58,13 @@ function Shop(ManagerID){
   return{data};
 }
 // manager OrderHistory
-function OrderHistory(ManagerID,page=1){
-  const offset = (page - 1) * listPerPage;
+function OrderHistory(ManagerID){
   const data= db.query(`select OrderHistoryID,Order_History.Time,Product.Name as ProductName
                         ,Order_History.Num,Supplier.Name as SupplierName
                         from Order_History,Product,Supplier
                         where Order_History.ProductSupplierID=Product.SupplierID and 
                         Order_History.ProductID=Product.ProductID and Product.SupplierID=Supplier.SupplierID and ShopManagerID= ?
-                        LIMIT ?, ? `,[ManagerID,offset,listPerPage])
-  //const meta = {page};
+                         `,[ManagerID])
   return{data}
 }
 //manager order

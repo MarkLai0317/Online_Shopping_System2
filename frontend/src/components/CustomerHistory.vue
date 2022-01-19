@@ -27,9 +27,13 @@
       </el-main>
       <p />
     </el-container>
-    <el-button @click="lastPage" :disabled="this.page==1">Last Page</el-button>
-    <el-box>{{ this.page }}</el-box>
-    <el-button @click="nextPage" :disabled="this.page==this.maxPage">Next Page</el-button>
+    <el-button @click="lastPage" 
+    :disabled="this.page==1"
+    size="mini">Last Page</el-button>
+    <el-box>&nbsp;&nbsp;&nbsp;&nbsp; {{this.page}} &nbsp;&nbsp; </el-box>
+    <el-button @click="nextPage" 
+    :disabled="this.page==this.maxPage"
+    size="mini">Next Page</el-button>
   </div>
 </template>
 
