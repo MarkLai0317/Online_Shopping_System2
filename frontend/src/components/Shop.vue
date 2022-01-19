@@ -9,7 +9,16 @@
     <el-table-column prop="ProductName" label="Product" width="150" />
     <el-table-column prop="SupplierID" label="Supplier" width="150" />
     <el-table-column prop="Num" label="Number" width="150"/>
-    <el-table-column prop="Price" label="Price" width="150"/>
+    <el-table-column prop="Price" label="Price" width="150" align="center">
+      <template #default="scope">
+        <el-input-number
+          v-model="scope.row.Price"
+          size="mini"
+          :min="1"
+          @change="changePrice(scope.row)"></el-input-number>
+          
+      </template>
+    </el-table-column> 
 
   </el-table>
   <el-pagination
@@ -43,16 +52,7 @@
       </template>
     </el-table-column> 
     <!-- -->
-    <el-table-column label="Price" width="150" align="center">
-      <template #default="scope">
-        <el-input-number
-          v-model="scope.row.price"
-          size="mini"
-          :min="1"
-          @change="changePrice(scope.row)"></el-input-number>
-          
-      </template>
-    </el-table-column> 
+    
     
     <!-- -->
     <el-table-column width="150" align="center">
@@ -116,10 +116,10 @@ export default {
         this.productTable = resobj.data
         // console.log("data:")
         // console.log(resobj.data)
-
+        
         for(var i=0;i<this.productTable.length;++i){
           this.productTable[i].number = 1
-           
+        }/*
           var found = -1
           for(var j=0;j<this.forSaleTable.length;++j){
             if(this.productTable[i].ProductID == this.forSaleTable[j].ProductID &&
@@ -136,7 +136,7 @@ export default {
            
           // this.productTable[i].price = 150 
             
-        }
+        }*/
         console.log(this.productTable)
         
       })
@@ -161,7 +161,7 @@ export default {
       this.axios.post('http://127.0.0.1:9000/ni/PriceChange', {
         // post 參數放這裡
         ManagerID: this.firebase.auth().currentUser.email,
-        Price: row.price,
+        Price: row.Price,
         SupplierID: row.SupplierID,
         ProductID: row.ProductID
       })

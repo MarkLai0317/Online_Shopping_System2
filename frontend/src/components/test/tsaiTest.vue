@@ -2,13 +2,23 @@
 <div>
   <h2>ForSale</h2>
   <el-table 
+  align="center"
   :data="currentPage" 
   style="width: 100%"
   >
     <el-table-column prop="ProductName" label="Product" width="150" />
     <el-table-column prop="SupplierID" label="Supplier" width="150" />
     <el-table-column prop="Num" label="Number" width="150"/>
-    <el-table-column prop="Price" label="Price" width="150"/>
+    <el-table-column prop="Price" label="Price" width="150" align="center">
+      <template #default="scope">
+        <el-input-number
+          v-model="scope.row.Price"
+          size="mini"
+          :min="1"
+          @change="changePrice(scope.row)"></el-input-number>
+          
+      </template>
+    </el-table-column> 
 
   </el-table>
   <el-pagination
@@ -19,23 +29,19 @@
     @current-change="setPage">
   </el-pagination>
 
-  
-
-
-  <!-- Have table -->
-
 
   <h2>Products</h2>
   <el-table 
+  align="center"
   :data="productTable" 
   style="width: 100%"
   >
-    <el-table-column prop="ProductName" label="Product" width="100" />
-    <el-table-column prop="SupplierID" label="Supplier" width="100" />
-    <el-table-column prop="StoreHouseID" label="StoreHouse" width="100" /> 
-    <el-table-column prop="Num" label="Remaining" width="100" /> 
+    <el-table-column prop="ProductName" label="Product" width="130" align="center" />
+    <el-table-column prop="SupplierID" label="Supplier" width="130" align="center" />
+    <el-table-column prop="StoreHouseID" label="StoreHouse" width="130" align="center"/> 
+    <el-table-column prop="Num" label="Remaining" width="130" align="center"/> 
 
-    <el-table-column label="Number">
+    <el-table-column label="Number" width="150" align="center">
       <template #default="scope">
         <el-input-number
           v-model="scope.row.number"
@@ -46,19 +52,10 @@
       </template>
     </el-table-column> 
     <!-- -->
-    <el-table-column label="Price">
-      <template #default="scope">
-        <el-input-number
-          v-model="scope.row.price"
-          size="mini"
-          :min="1"
-          @change="changePrice(scope.row)"></el-input-number>
-          
-      </template>
-    </el-table-column> 
+    
     
     <!-- -->
-    <el-table-column>
+    <el-table-column width="150" align="center">
       <template #default="scope">
         <el-button
           size="mini"
@@ -119,10 +116,10 @@ export default {
         this.productTable = resobj.data
         // console.log("data:")
         // console.log(resobj.data)
-
+        
         for(var i=0;i<this.productTable.length;++i){
           this.productTable[i].number = 1
-           
+        }/*
           var found = -1
           for(var j=0;j<this.forSaleTable.length;++j){
             if(this.productTable[i].ProductID == this.forSaleTable[j].ProductID &&
@@ -139,7 +136,7 @@ export default {
            
           // this.productTable[i].price = 150 
             
-        }
+        }*/
         console.log(this.productTable)
         
       })
@@ -164,7 +161,7 @@ export default {
       this.axios.post('http://127.0.0.1:9000/ni/PriceChange', {
         // post 參數放這裡
         ManagerID: this.firebase.auth().currentUser.email,
-        Price: row.price,
+        Price: row.Price,
         SupplierID: row.SupplierID,
         ProductID: row.ProductID
       })
