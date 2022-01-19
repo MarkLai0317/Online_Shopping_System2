@@ -27,9 +27,9 @@
       </el-main>
       <p />
     </el-container>
-    <el-button @click="lastPage">Last Page</el-button>
+    <el-button @click="lastPage" :disabled="this.page==1">Last Page</el-button>
     <el-box>{{ this.page }}</el-box>
-    <el-button @click="nextPage">Next Page</el-button>
+    <el-button @click="nextPage" :disabled="this.page==this.maxPage">Next Page</el-button>
   </div>
 </template>
 
@@ -90,7 +90,7 @@ export default {
      if (this.page + 1 <= this.maxPage) { // where can get the limit of page
         this.page += 1;
        }
-      //next page
+      //next pagegti
       //get 寫法
       this.axios.get('http://127.0.0.1:9000/nn/history', {
         params: {
