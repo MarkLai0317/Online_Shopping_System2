@@ -65,6 +65,7 @@ function OrderHistory(ManagerID){
                         from Order_History,Product,Supplier
                         where Order_History.ProductSupplierID=Product.SupplierID and 
                         Order_History.ProductID=Product.ProductID and Product.SupplierID=Supplier.SupplierID and ShopManagerID= ?
+                        ORDER BY OrderHistoryID DESC
                          `,[ManagerID])
   return{data}
 }

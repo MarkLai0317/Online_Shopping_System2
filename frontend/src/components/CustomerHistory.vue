@@ -1,29 +1,31 @@
 <template>
   <div>
-    <el-container>
-      <p>Order history</p>
-      <p />
-      <el-header>
-        <p />
+    <p>Order history</p>
+    <el-container style="margin-left: 650px">
+      
+      
+      <el-main>
         <el-row :gutter="30" justify="start">
           <el-col :span="2">
             <div class="grid-content">{{ order.Date }}</div>
           </el-col>
           <el-col :span="4" :offset="0">
-            <div class="grid-content">ID:{{ order.Oid }}</div>
+            <div class="grid-content">trade ID:{{ order.Oid }}</div>
           </el-col>
           <el-col :span="3" :offset="0">
-            <div class="grid-content">${{ order.Price }}</div>
+            <div class="grid-content">交易價格 ${{ order.Price }}</div>
           </el-col>
         </el-row>
-      </el-header>
-      <el-main>
-        <el-table :data="table">
-          <el-table-column prop="ProductName" label="Name" width="220" />
-          <el-table-column prop="ShopName" label="Shop" width="150" />
-          <el-table-column prop="Num" label="Number" width="80" />
-          <el-table-column prop="Price" label="Price" width="100" />
-        </el-table>
+        <el-row>
+        
+          <el-table :data="table" >
+            <el-table-column prop="ProductName" label="Name" width="220" />
+            <el-table-column prop="ShopName" label="Shop" width="150" />
+            <el-table-column prop="Num" label="Number" width="80" />
+            <el-table-column prop="Price" label="Price" width="100" />
+          </el-table>
+        
+        </el-row>
       </el-main>
       <p />
     </el-container>
