@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <el-select
       v-model="currentHouse"
       placeholder="Select Store House"
@@ -14,7 +14,7 @@
       </el-option>
     </el-select>
     <p />
-    <el-table :data="currentPage" style="width: 100%">
+    <el-table :data="currentPage" style="margin-left: 30%; width: 100%">
       <el-table-column fixed prop="Name" label="Product" width="150" />
       <el-table-column prop="SupplierID" label="Supplier" width="150" />
       <!-- -->
@@ -211,4 +211,6 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style >
+
+</style>
