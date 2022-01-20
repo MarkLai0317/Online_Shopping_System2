@@ -10,7 +10,7 @@
     <el-table-column width="100" align="center">
       <template #default="scope">
         <el-button @click="toggleMinus(scope.row)"
-        :disabled="scope.row.NumberInCart<=0">-</el-button>
+        :disabled="scope.row.NumberInCart<=1">-</el-button>
       </template>
     </el-table-column>
     <el-table-column prop="NumberInCart" label="Quantity" show-overflow-tooltip align="center"/>
