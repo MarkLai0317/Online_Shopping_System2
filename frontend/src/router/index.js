@@ -57,6 +57,10 @@ const routes = [
         path: 'revenue',
         component: () => import('../components/Revenue.vue')
       },
+      {
+        path:'chat',
+        component: () => import('../components/ManagerChat.vue')
+      }
     ]
   },
   {
@@ -79,7 +83,12 @@ const routes = [
         path: 'cart',
         name: 'Cart',
         component: ()=> import('../components/CustomerCart.vue') 
+      },
+      {
+        path:'chat',
+        component: ()=> import('../components/CustomerChat.vue')
       }
+
     ]
   },
   {
