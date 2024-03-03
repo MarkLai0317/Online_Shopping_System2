@@ -143,9 +143,7 @@
 
 <br/><br/><br/>
 
-## 系統架構
 
-![](./image/framework.jpg)
 
 
 
